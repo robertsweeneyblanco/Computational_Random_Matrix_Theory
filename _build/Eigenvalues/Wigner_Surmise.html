@@ -1,0 +1,939 @@
+---
+redirect_from:
+  - "/eigenvalues/wigner-surmise"
+interact_link: content/Eigenvalues/Wigner_Surmise.ipynb
+kernel_name: python3
+kernel_path: content/Eigenvalues
+has_widgets: false
+title: |-
+  Wigner's Surmise
+pagenum: 9
+prev_page:
+  url: /Eigenvalues/Wigner_Semicircle_Law.html
+next_page:
+  url: /Eigenvalues/Zeta_and_GUE/Zeta_and_GUE.html
+suffix: .ipynb
+search: beta n lambda sqrt frac eigenvalues level f s sim delta spacings mean left right suppose x y z define t leq j gamma goe get thus next distances wigners section density lambdaj times diagonal recall eigenvalue smaller expression between note study heppens tend unfold unfolding collection lambdai large results spacing closed form cases bar below demonstration does same surmise e p unfolded b approximation test terms off term easily characteristic equation general matrix solve subtract bigger following difference denoted also square root sum squares iid normals brings us our main result text rayleigh want spaces rightarrow infty lets examine
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Wigner's Surmise</div>
+</div>
+    <div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;../../&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">RandomMatrix</span> <span class="k">as</span> <span class="nn">RM</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose we have a 2 by 2 GOE with $X$ and $Y$ as the diagonal terms and $Z$ as the off diagonal term. Recall that $X,Y \sim N(0,1)$ and $Z \sim N(0, \frac{1}{2})$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;X Y Z&quot;</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">Matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">X</span><span class="p">,</span><span class="n">Z</span><span class="p">],</span> <span class="p">[</span><span class="n">Z</span><span class="p">,</span><span class="n">Y</span><span class="p">]]))</span>
+<span class="n">A</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle \left[\begin{matrix}X & Z\\Z & Y\end{matrix}\right]$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can easily find the characteristic equation for this general matrix</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">λ</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;λ&quot;</span><span class="p">)</span>
+<span class="n">characteristic_eq</span> <span class="o">=</span> <span class="n">det</span><span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">λ</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">characteristic_eq</span>                      
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle - Z^{2} + \left(X - 1.0 λ\right) \left(Y - 1.0 λ\right)$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If we solve to find the eigenvalues and subtract the bigger eigenvalue from the smaller one we get the following expression for the difference between the eigenvalues, denoted by $\Delta$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">λ_2</span><span class="p">,</span> <span class="n">λ_1</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">characteristic_eq</span><span class="p">,</span><span class="n">λ</span><span class="p">)</span>
+<span class="n">Δ</span> <span class="o">=</span> <span class="n">λ_1</span> <span class="o">-</span> <span class="n">λ_2</span>
+<span class="n">Δ</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle 2.0 \sqrt{0.25 X^{2} - 0.5 X Y + 0.25 Y^{2} + Z^{2}}$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So $\Delta = \sqrt{(X-Y)^2 + 4Z^2}$. If we define $T=X-Y$, then $T \sim N(0, 2)$. We can also define $S=2Z$, and note $S \sim N(0,2)$. We can write $\Delta = \sqrt{T^2 + S^2}$. Thus $\Delta$ is the square root of the sum of squares for iid normals, which brings us to our main result</p>
+$$\Delta \sim \text{Rayleigh}(\sqrt{2})$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trials</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="n">Δs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">λ_1</span><span class="p">,</span> <span class="n">λ_2</span> <span class="o">=</span> <span class="n">λs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">λs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">Δs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">λ_1</span> <span class="o">-</span> <span class="n">λ_2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$\lambda_2 - \lambda_1$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Level Difference&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">Δs</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Surmise_9_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose we want to study what heppens to the spaces between eigenvalues as $N \rightarrow \infty$. For now, let's examine what heppens for $N=100$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trials</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">Δs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">matrix_size</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span> 
+    <span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">eig_spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">λs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">λs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix_size</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">Δs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">eig_spaces</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Level Differences&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Level Difference (N=100)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">Δs</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Surmise_12_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next we'll try $N=300$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trials</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">Δs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">matrix_size</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span> 
+    <span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">eig_spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">λs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">λs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix_size</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">Δs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">eig_spaces</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Level Differences&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Level Differences (N=100)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">Δs</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Surmise_15_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Clearly, and perhaps unsurprisingly, the spacings become smaller and tend towards 0. In order to study the behavior of spacings asymptotically, we need to "unfold" the eigenvalues so that the spacings have mean 1.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Unfolding-of-Spectra">Unfolding of Spectra<a class="anchor-link" href="#Unfolding-of-Spectra"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose we have a collection of eigenvalues $\lambda_1 \leq \lambda_2 \leq ... \leq \lambda_n$ and we are interested in studying their level distances $\lambda_{i+1} - \lambda_i$. As seen above, these level distances will tend to 0 as the dimension of the Gaussian Ensemble gets large. Thus to get interesting results, we must scale (or "unfold") the eigenvalues so the mean spacing is equal to 1. To find this scaling factor, we use the results of the Wigner's Semicircle law section to define the mean cumulative spectral density</p>
+$$F_{N, \beta}(\lambda) = N \int_{-\sqrt{2 \beta N}}^{\lambda} \rho_{\sqrt{2 \beta N}}(t) dt $$<p>Recall from the previous section the closed form solution to the indefinite integral</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">N</span><span class="p">,</span> <span class="n">β</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;N β&quot;</span><span class="p">,</span> <span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">σ</span> <span class="o">=</span> <span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">β</span><span class="o">*</span><span class="n">N</span><span class="p">))</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">β</span><span class="o">*</span><span class="n">N</span><span class="p">)</span> <span class="o">-</span> <span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Λ_N_β</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="n">σ</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<span class="n">Λ_N_β</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle \frac{N β \operatorname{asin}{\left(\frac{\sqrt{2} t}{2 \sqrt{N} \sqrt{β}} \right)} + \frac{t \sqrt{2 N β - t^{2}}}{2}}{\pi β}$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can find a closed form expression for $F(\lambda)$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">λ</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;λ&quot;</span><span class="p">)</span>
+<span class="n">F_λ</span> <span class="o">=</span> <span class="n">Λ_N_β</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">λ</span><span class="p">)</span> <span class="o">-</span> <span class="n">Λ_N_β</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">β</span><span class="o">*</span><span class="n">N</span><span class="p">))</span>
+<span class="n">F_λ</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle \frac{N}{2} + \frac{N β \operatorname{asin}{\left(\frac{\sqrt{2} λ}{2 \sqrt{N} \sqrt{β}} \right)} + \frac{λ \sqrt{2 N β - λ^{2}}}{2}}{\pi β}$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Thus we get</p>
+<p>$ F_{N, \beta}(\lambda) = \begin{cases} 
+      0 &amp; \lambda \leq -\sqrt{2 \beta N} \\
+      \frac{N}{2} + \frac{1}{\pi \beta} \left(N \beta sin^{-1}(\frac{\sqrt{2}\lambda}{2 \sqrt{N \beta}}) + \frac{\lambda \sqrt{2N\beta - \lambda^2}}{2}\right) &amp; \lambda \in (-\sqrt{2 \beta N}, \sqrt{2 \beta N}) \\
+      N &amp; \lambda \geq \sqrt{2 \beta N}
+   \end{cases}$</p>
+<p>We can now define $\bar{\lambda}_i := F(\lambda_i)$. The level spacings of these new values will have unit mean in expectation. The intuition for this is straightfoward, suppose $\lambda_j$ is the $j$th largest eigenvalue. Then we expect $F(\lambda_j) = j$. So $F(\lambda_{j+1}) - F(\lambda_j) = j + 1 - j = 1$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">F</span><span class="p">(</span><span class="n">eig</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">eig</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">beta</span><span class="o">*</span><span class="n">size</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">eig</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">beta</span><span class="o">*</span><span class="n">size</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">size</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># F_λ is defined outside this function</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">F_λ</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">β</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">λ</span><span class="p">,</span> <span class="n">eig</span><span class="p">)</span><span class="o">.</span><span class="n">evalf</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Below is a demonstration of the unfolding procedure for a GOE. First we generate a $300 \times 300$ GOE and find its eigenvalues</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">matrix_size</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span> 
+<span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next we find $\bar{\lambda}_i \ \forall i$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">λ_bar</span> <span class="o">=</span> <span class="p">[</span><span class="n">F</span><span class="p">(</span><span class="n">eigenvalue</span><span class="p">,</span> <span class="n">matrix_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">eigenvalue</span> <span class="ow">in</span> <span class="n">λs</span><span class="p">]</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can verify that this collection of eigenvalues does indeed have level spacing with mean about 1.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">eig_spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">λ_bar</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">λ_bar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix_size</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+<span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">eig_spaces</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1.0025488914947855</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Below is the same demonstration but for a GUE</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">matrix_size</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GUE</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span> 
+<span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">λ_bar</span> <span class="o">=</span> <span class="p">[</span><span class="n">F</span><span class="p">(</span><span class="n">eigenvalue</span><span class="p">,</span> <span class="n">matrix_size</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">eigenvalue</span> <span class="ow">in</span> <span class="n">λs</span><span class="p">]</span> 
+<span class="n">eig_spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">λ_bar</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">λ_bar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix_size</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+<span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">eig_spaces</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.999554510091682</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Wigner's-Surmise">Wigner's Surmise<a class="anchor-link" href="#Wigner's-Surmise"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In 1956, E. P. Wigner surmised a formula for the density of level spacings of normalized eigenvalues. Wigner's Surmise says that the density of level distances for an unfolded set of eigenvalues can be approximated by</p>
+$$p_{\beta}(s) = a_{\beta} s^{\beta} e^{- b_{\beta} s^2} $$<p>where</p>
+$$ a_{\beta} = 2 \frac{\left(\Gamma(\frac{\beta + 2}{2})\right)^{\beta + 1}}{\left(\Gamma(\frac{\beta + 1}{2})\right)^{\beta + 2}}, \ b_{\beta} = \frac{\left(\Gamma(\frac{\beta + 2}{2})\right)^{2}}{\left(\Gamma(\frac{\beta + 1}{2})\right)^{2}}$$<p>Note this is an approximation and does not necessarily converge for large $N$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gamma</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">wigner_surmise</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">gamma</span><span class="p">((</span><span class="n">beta</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="n">beta</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">gamma</span><span class="p">((</span><span class="n">beta</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="n">beta</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span><span class="p">((</span><span class="n">beta</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">gamma</span><span class="p">((</span><span class="n">beta</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">s</span><span class="o">**</span><span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="o">*</span><span class="n">s</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will test this approximation by generating multiple $100 \times 100$ GOEs and plotting the distribution of their unfolded eigenvalues.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">matrix_size</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">trials</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">all_GOE_spaces</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span> 
+    <span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">λ_bar</span> <span class="o">=</span> <span class="p">[</span><span class="n">F</span><span class="p">(</span><span class="n">eigenvalue</span><span class="p">,</span> <span class="n">matrix_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">eigenvalue</span> <span class="ow">in</span> <span class="n">λs</span><span class="p">]</span> 
+    <span class="n">eig_spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">λ_bar</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">λ_bar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix_size</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">all_GOE_spaces</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">eig_spaces</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Level Spacings&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Wigner&#39;s Sermise (GOE)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">all_GOE_spaces</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+<span class="n">wigner_curve</span> <span class="o">=</span> <span class="n">wigner_surmise</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">wigner_curve</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Surmise_37_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now we do the same test for $100 \times 100$ GUEs</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">matrix_size</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">trials</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">all_GUE_spaces</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GUE</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span> 
+    <span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">λ_bar</span> <span class="o">=</span> <span class="p">[</span><span class="n">F</span><span class="p">(</span><span class="n">eigenvalue</span><span class="p">,</span> <span class="n">matrix_size</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">eigenvalue</span> <span class="ow">in</span> <span class="n">λs</span><span class="p">]</span> 
+    <span class="n">eig_spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">λ_bar</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">λ_bar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix_size</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">all_GUE_spaces</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">eig_spaces</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Level Spacings&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Wigner&#39;s Sermise (GUE)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">all_GUE_spaces</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+<span class="n">wigner_curve</span> <span class="o">=</span> <span class="n">wigner_surmise</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">wigner_curve</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Surmise_40_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will discuss how to calculate the exact level densities for the $\beta = 2$ case in the next section.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

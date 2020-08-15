@@ -1,0 +1,778 @@
+---
+redirect_from:
+  - "/gaussian-regularization/defining-pseudospectrum"
+interact_link: content/Gaussian_Regularization/Defining_Pseudospectrum.ipynb
+kernel_name: python3
+kernel_path: content/Gaussian_Regularization
+has_widgets: false
+title: |-
+  Defining Pseudospectrum
+pagenum: 14
+prev_page:
+  url: /Gaussian_Regularization/Measuring_Stability.html
+next_page:
+  url: /Gaussian_Regularization/Pseudospectral_Shattering.html
+suffix: .ipynb
+search: epsilon eigenvalues z matrix pseudospectrum lambda e frac matricies thus plot normal u d noisy original hr matrices suppose its using widetilde below far theorem lets noise where definition mathbb c v norm equal within note unitary union disks lemma leftrightarrow since diagonal lambdaz eigenvalue following special case polynomial f t also visualize expected bauer fike expect closer gamma section defined exists n leq boundaries contained respective geq radius centered udu operator k lambdak closest begin motivating why interested studying frobenius companion property charateristic complex plane scatter generate gaussian normalized dont stray too result examples get better idea added tend
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Defining Pseudospectrum</div>
+</div>
+    <div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">sqrtm</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">toeplitz</span><span class="p">,</span> <span class="n">eigvals</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We begin by motivating why we are interested in studying pseudospectrum.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Eigenvalues-of-Noisy-Matrices">Eigenvalues of Noisy Matrices<a class="anchor-link" href="#Eigenvalues-of-Noisy-Matrices"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose we have the following matrix $A$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">A</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0, 0, 0, 1],
+       [1, 0, 0, 0],
+       [0, 1, 0, 0],
+       [0, 0, 1, 0]])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is a special case of the Frobenius companion matrix of the polynomial $f(t)=t^4-1$. By a special property of these matricies, it's charateristic polynomial is also $f$. Thus it has eigenvalues $i, -i, 1, -1$. We can find and visualize the eigenvalues of $A$ in the Complex Plane using a scatter plot.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">λs</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">eig_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="n">eig_scatter</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Eigenvalues&#39;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Re&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Im&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Eigenvalues of $A$&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Defining_Pseudospectrum_6_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose we generate a Gaussian matrix $E$ and normalized it so $\widetilde{E} = \frac{E}{||E||}$. Below is a plot of the eigenvalues of $A$ and $A + \widetilde{E}$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">true_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">A_prime</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="p">(</span><span class="n">noise</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">λs_prime</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">A_prime</span><span class="p">)</span>
+<span class="n">noise_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs_prime</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs_prime</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;lime&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>  
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="n">true_scatter</span><span class="p">,</span> <span class="n">noise_scatter</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Eigenvalues of $A$&#39;</span><span class="p">,</span> <span class="s1">&#39;Eigenvalues of $A + \widetilde</span><span class="si">{E}</span><span class="s1">$&#39;</span><span class="p">),</span> 
+           <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Re&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Im&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Eigenvalues&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Defining_Pseudospectrum_8_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see the eigenvalues don't stray too far from the original eigenvalues. This is an expected result from the Bauer-Fike theorem. Let's plot some more examples to get a better idea of how far the eigenvalues of $A$ with added noise tend to deviate from the original eigenvalues.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">true_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">A_prime</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="p">(</span><span class="n">noise</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">λs_prime</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">A_prime</span><span class="p">)</span>
+    <span class="n">noise_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs_prime</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs_prime</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;lime&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+    
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="n">true_scatter</span><span class="p">,</span> <span class="n">noise_scatter</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;True Eigenvalues&#39;</span><span class="p">,</span> <span class="s1">&#39;Noisy Eigenvalues&#39;</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">));</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Defining_Pseudospectrum_10_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If we decrease the magnitude of the perturbation, we expect (by the Bauer-Fike theorem) that the eigenvalues from the noisy matricies to cluster closer to the original eigenvalues. We run this hypothesis below by plotting several samples of eigenvalues of $A + \gamma \widetilde{E}$ where $\gamma=\frac{1}{10}$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">γ</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">1</span>
+<span class="n">true_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">A_prime</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">γ</span> <span class="o">*</span> <span class="p">(</span><span class="n">noise</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">λs_prime</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">A_prime</span><span class="p">)</span>
+    <span class="n">noise_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs_prime</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs_prime</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+    
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="n">true_scatter</span><span class="p">,</span> <span class="n">noise_scatter</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;True Eigenvalues&#39;</span><span class="p">,</span> <span class="s1">&#39;Noisy Eigenvalues&#39;</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">));</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Defining_Pseudospectrum_12_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The eigenvalues from the noisy matricies are almost indistinguishable from the original eigenvalues. In the next section, we will define the Pseudospectrum of a matrix, which determines how far we can expect eigenvalues of a matrix will move when introduced to random noise.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Definition-of-Pseudospectrum">Definition of Pseudospectrum<a class="anchor-link" href="#Definition-of-Pseudospectrum"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The locus of the eigenvalues for a pertubed matrix can be calculated and is defined as the pseudospectrum for the unperturbed matrix. The formal definition is given below</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Definition</strong>: The $\epsilon$-pseudospectrum of a matrix, denoted $\Lambda_{\epsilon}(A)$, is defined as</p>
+$$\Lambda_{\epsilon}(A) = \{\lambda \in \mathbb{C} | \exists v \notin \mathbb{C}\setminus \{ 0 \}, \exists E \in \mathbb{C}^{n \times n}: (A+E)v = \lambda v, ||E|| \leq \epsilon \}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><br></p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In words, the $\epsilon$-pseudospectrum is the set of all eigenvalues for matricies that are close enough to $A$ such that the norm of the difference between the matrix and $A$ is less than or equal to $\epsilon$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Visualizing-the-Pseudospectrum">Visualizing the Pseudospectrum<a class="anchor-link" href="#Visualizing-the-Pseudospectrum"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are already some existing libraries that can visualize the pseudospectrum of a matrix. We will be using Python's pseudopy package.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pseudopy</span> <span class="kn">import</span> <span class="n">NonnormalMeshgrid</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Continuing with the same matrix $A$ from the beginning of the section, let's plot the boundary of the $\epsilon$-pseudospectrum for $\epsilon = 10^{-1}$ and $\epsilon = 10^{0}$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Create Meshgrid</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">NonnormalMeshgrid</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">real_min</span><span class="o">=-</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">real_max</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">imag_min</span><span class="o">=-</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">imag_max</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">real_n</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">imag_n</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="c1">## Create Contours </span>
+<span class="n">ϵs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="s2">&quot;lime&quot;</span><span class="p">]</span>
+<span class="n">contours</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">Real</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">Imag</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">Vals</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">ϵs</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+
+<span class="c1">## Plot Eigenvalues</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+
+<span class="c1">## Create Legend </span>
+<span class="n">legend_elements</span> <span class="o">=</span> <span class="n">contours</span><span class="o">.</span><span class="n">legend_elements</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">legend_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;$\epsilon=10^{-1}$&#39;</span><span class="p">,</span><span class="s1">&#39;$\epsilon=10^</span><span class="si">{0}</span><span class="s1">$&#39;</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">legend_names</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+
+
+<span class="c1">## Label Plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Re&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Im&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;$\epsilon$-Pseudospectra of Frobenius Companion Matrix&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Defining_Pseudospectrum_24_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>These boundaries represent the boundaries for the distribution of eigenvalues for the noisy matricies we plotted earlier in the chapter. Let's plot those points again to confirm that they are indeed contained within their respective pseudospectrum.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Create Meshgrid</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">NonnormalMeshgrid</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">real_min</span><span class="o">=-</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">real_max</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">imag_min</span><span class="o">=-</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">imag_max</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">real_n</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">imag_n</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="c1">## Create Contours </span>
+<span class="n">ϵs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="s2">&quot;lime&quot;</span><span class="p">]</span>
+<span class="n">contours</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">Real</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">Imag</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">Vals</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">ϵs</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+
+<span class="c1">## Plot Eigenvalues of A</span>
+<span class="n">true_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+
+<span class="c1">## Plot Eigenvalues of A with noise</span>
+<span class="n">γ_1</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">0</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">A_prime</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">γ_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">noise</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">λs_prime</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">A_prime</span><span class="p">)</span>
+    <span class="n">very_noisy_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs_prime</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs_prime</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;lime&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">## Plot Eigenvalues of A with small noise</span>
+<span class="n">γ_0</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">1</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">A_prime</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">γ_0</span> <span class="o">*</span> <span class="p">(</span><span class="n">noise</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">λs_prime</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">A_prime</span><span class="p">)</span>
+    <span class="n">noisy_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs_prime</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs_prime</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">## Create Legend </span>
+<span class="n">scatter_plots</span> <span class="o">=</span> <span class="p">[</span><span class="n">true_scatter</span><span class="p">,</span> <span class="n">noisy_scatter</span><span class="p">,</span> <span class="n">very_noisy_scatter</span><span class="p">]</span>
+<span class="n">legend_elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contours</span><span class="o">.</span><span class="n">legend_elements</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">scatter_plots</span><span class="p">)</span>
+<span class="n">legend_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;$\epsilon=10^{-1}$&#39;</span><span class="p">,</span><span class="s1">&#39;$\epsilon=10^</span><span class="si">{0}</span><span class="s1">$&#39;</span><span class="p">,</span> 
+                <span class="s1">&#39;True Eigenvalues&#39;</span><span class="p">,</span> <span class="s1">&#39;Noisy Eigenvalues ($\gamma=10^{-1}$)&#39;</span><span class="p">,</span> 
+                <span class="s1">&#39;Very Noisy Eigenvalues ($\gamma=10^</span><span class="si">{0}</span><span class="s1">$)&#39;</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">legend_names</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+
+
+<span class="c1">## Label Plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Re&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Im&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;$\epsilon$-Pseudospectra of Frobenius Companion Matrix&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Defining_Pseudospectrum_26_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As expected, the eigenvalues of $A$ with some noise are contained within their respective pseudospectrum.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Pseudospectrum-of-Normal-Matrices">Pseudospectrum of Normal Matrices<a class="anchor-link" href="#Pseudospectrum-of-Normal-Matrices"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that our matrix is unitary (and thus normal).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">A</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[1, 0, 0, 0],
+       [0, 1, 0, 0],
+       [0, 0, 1, 0],
+       [0, 0, 0, 1]])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A</span> <span class="o">@</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[1, 0, 0, 0],
+       [0, 1, 0, 0],
+       [0, 0, 1, 0],
+       [0, 0, 0, 1]])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It turns out that the pseudospectrum of normal matrices is always a union of disks. We will use the following lemma to prove this statement.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Lemma:</strong> $z \in \Lambda_{\epsilon}(A) \Leftrightarrow ||(z-A)^{-1}|| \geq \frac{1}{\epsilon}$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Theorem:</strong> If $A$ is normal, then $\Lambda_{\epsilon}(A)$ is a union of disks with radius $\epsilon$ centered about its eigenvalues.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><em>Proof</em>: Suppose $A$ is normal and can be diagonlized with $A=UDU^*$ for $U$ unitary. Then</p>
+$$||(z-A)^{-1}|| = ||(zUU^* - UDU^*)^{-1}|| = ||(U(z - D)U^*)^{-1}|| = ||U(z-D)^{-1}U^*||$$<p>.</p>
+<p>Since since operator norm doesn't change when conjugated by a unitary, this equals $||(z-D)^{-1}||$. Note that $(z-D)^{-1}$ is a diagonal matrix where the $i$th diagonal is equal to $\frac{1}{z-\lambda_i}$. The operator norm of a diagonal matrix is equal to its greatest element, so</p>
+$$(z-D)^{-1} = \underset{k}{\max} |\frac{1}{z-\lambda_k}|$$<p>.</p>
+<p>Note the $k$ that will maximize the expression is the one where $\lambda_k$ is closest to $z$. Let $\lambda_z$ be the closest eigenvalue to $z$. Thus, using the lemma, we know $z \in \Lambda_{\epsilon}(A) \Leftrightarrow |\frac{1}{z-\lambda_z}| \geq \frac{1}{\epsilon}$. This can be rewritten as $z \in \Lambda_{\epsilon}(A) \Leftrightarrow |z-\lambda_z| \leq \epsilon$.</p>
+<p>Thus $z$ is in $\Lambda_{\epsilon}(A)$ if it is closer than $\epsilon$ to some eigenvalue. Since this is an if and only if condition, it is also the case that all values within $\epsilon$ of an eigenvalue is in $\Lambda_{\epsilon}(A)$. Thus $\Lambda_{\epsilon}(A)$ is a union of disks of radius $\epsilon$ centered at the eigenvalues.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

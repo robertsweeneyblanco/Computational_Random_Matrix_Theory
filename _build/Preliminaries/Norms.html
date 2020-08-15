@@ -1,0 +1,643 @@
+---
+redirect_from:
+  - "/preliminaries/norms"
+interact_link: content/Preliminaries/Norms.ipynb
+kernel_name: python3
+kernel_path: content/Preliminaries
+has_widgets: false
+title: |-
+  Norms
+pagenum: 4
+prev_page:
+  url: /Preliminaries/Probability_Theory.html
+next_page:
+  url: /Preliminaries/Gaussian_Ensembles.html
+suffix: .ipynb
+search: norm x vector rho p norms v matrix sqrt m sup xi n dm mathbb u f known suppose d also following hr infty maximum xp operator text r leq sum where function distance distribution unitary ux absolute geq sumi such values used demonstrate c properties triangle inequality absolutely homogeneous rightarrow common equal using numpy np linalg often called origin note standard theorem matrices proof well value thus define times matricies fn axp diagonal its element di begin align aligned dx end expository assume familiarity linear algebra especially topics eigenvectors eigenvalues singular section summarize establish notation throughout rest couple results
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Norms</div>
+</div>
+    <div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The expository will assume familiarity with Linear Algebra, especially topics such as eigenvectors, eigenvalues, and singular values. This section will summarize vector and matrix norm and will establish the notation used throughout the rest of the text. It will also demonstrate a couple results that will be used later in the text.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Vector-Norms">Vector Norms<a class="anchor-link" href="#Vector-Norms"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A vector norm $\rho$ on some vector space $V$ over the field $\mathbb{R}$ or $\mathbb{C}$ is a mapping from $V$ to $\mathbb{R}$ such that the following properties hold for all $u,v \in V$ and $a \in F$</p>
+<ol>
+<li>$\rho(u+v) \leq \rho(u) + \rho(v)$ (Triangle Inequality) </li>
+<li>$\rho(av) = |a| \rho(v)$ (Absolutely Homogeneous ) </li>
+<li>$\rho(v) = 0 \Rightarrow v = 0$</li>
+</ol>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="p-norms">p-norms<a class="anchor-link" href="#p-norms"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The most common types of vector norms are known as "p-norms", which are norms that take the following form</p>
+$$|| x ||_p = \left(\sum_{i} |x_i|^p \right)^{1/p} $$<p>where $p$ is any real number greater than or equal to one. We can compute p-norms using Numpy with the function <code>np.linalg.norm</code>. We will demonstrate computing the different norms on the following vector $v$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">v</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([-0.46716782,  0.29599552])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="1-norm">1-norm<a class="anchor-link" href="#1-norm"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The 1-norm is often called the manhattan distance or the taxicab norm. This norm calculates the distance from a vector to the origin by only traveling along the main axes in a coordinate system.</p>
+$$|| x ||_1 = \sum_{i} |x_i| $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.7631633402193927</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2-norm">2-norm<a class="anchor-link" href="#2-norm"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The 2-norm mesasures the Euclidean distance from a point to the origin.</p>
+$$|| x ||_2 = \sqrt{\sum_{i} |x_i|^2} = \sqrt{x^* x} $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is the most common norm and it is often convention to omit the $2$ in the subscript. Note that the distribution of the 2-norm for a vector of two independent standard normal random variables has the Rayleigh distribution. Also, the distribution of $||v||^2$ where $v$ is a vector of $n$ iid standard normals is Chi-squared(n).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.5530453150208221</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Theorem</strong>: Unitary transformations are isometries with respect to the 2-norm. That is, Unitary matrices do not change the 2-norm of a vector.</p>
+<p><em>Proof</em>: Suppose $U$ is a unitary matrix. Then $||Ux|| = \sqrt{(Ux)^* (Ux)} = \sqrt{x^* U^* U x} = \sqrt{x^* x} = ||x||$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="$\infty$-norm">$\infty$-norm<a class="anchor-link" href="#$\infty$-norm"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is a well known result that the p-norm of a vector approaches the maximum absolute value as $p \longrightarrow \infty$. It turns out that the maximum absolute value of a vector satisfies all three properties of a norm. Thus the $\infty-norm$, also called the maximum norm, can be defined as</p>
+$$|| x ||_{\infty} = \max_i(|x_i|) $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.46716782126474604</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note this is equivalent to using Python's <code>max</code> function on the absolute values.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.46716782126474604</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Matrix-Norms">Matrix Norms<a class="anchor-link" href="#Matrix-Norms"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Likewise, we can define norms for matrices as long as they satisfy the following condition for $M, N \in F^{m \times n}$ and $a \in F$ where $F$ is $\mathbb{R}$ or $\mathbb{C}$</p>
+<ol>
+<li>$\rho(M+N) \leq \rho(M) + \rho(N)$ (Triangle Inequality)</li>
+<li>$\rho(aM) = |a| \rho(M)$ (Absolutely Homogeneous)</li>
+<li>$\rho(M) \geq 0$</li>
+<li>$\rho(M) = 0 \Rightarrow M = 0$</li>
+</ol>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Matrix-p-norm">Matrix p-norm<a class="anchor-link" href="#Matrix-p-norm"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similar to vector norms, we have a family of norms known as "p-norms" for matricies. Suppose $A \in F^{m \times n}$ matrix and $p \geq 1$</p>
+$$ || A ||_p = \sup_{x \in F^n \\ x \neq 0} \frac{||Ax||_p}{||x||_p} = \sup_{x \in F^n \\||x||_p = 1} ||Ax||_p$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>np.linalg.norm</code> function can also be applied to matricies to find the matrix norm.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">A</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 0.18548011, -0.82809842],
+       [-0.03192753,  1.00155352]])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Operator-norm">Operator norm<a class="anchor-link" href="#Operator-norm"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When $p=2$, this norm is known as the Operator norm. We will denote the operator norm of a matrix $A$ as $||A||$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1.307451049240857</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Theorem:</strong>  The operator norm of a diagonal matrix is equal to its maximum element</p>
+<p><em>Proof:</em> Suppose $D$ is a diagonal matrix with $(D)_{ii} = d_i$. Suppose the greatest element is $d_m$, then</p>
+$$
+\begin{align}
+\begin{aligned}
+||D|| &amp;= \sup_{||x||_p = 1} ||Dx|| \\
+&amp;=  \sup_{||x|| = 1} \sqrt{\sum_i (d_i x_i)^2} \\
+&amp;\leq \sup_{||x|| = 1} \sqrt{\sum_i (d_m x_i)^2} \\
+&amp;=  |d_m| \sup_{||x|| = 1} \sqrt{\sum_i (x_i)^2}\\ 
+&amp;=  |d_m|
+\end{aligned}
+\end{align}
+$$<p>Now define $e_m$ to be a vector of all zeros except a one in the $m$th component</p>
+$$||D||=\sup_{||x||_p = 1} ||Dx|| \geq ||De_m|| = |d_m|$$<p>Thus the two inequalities imply $||D|| = |d_m|$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Frobenius-norm">Frobenius norm<a class="anchor-link" href="#Frobenius-norm"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose $A$ is a matrix and $A^*$ is it's hermetian adjoint.</p>
+$$||A||_F = \sqrt{\text{Trace}(A^*A)} $$<p>This norm is well known and can be computed with Numpy.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="s1">&#39;fro&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1.3131179271021802</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

@@ -1,0 +1,518 @@
+---
+redirect_from:
+  - "/gaussian-regularization/pseudospectral-shattering"
+interact_link: content/Gaussian_Regularization/Pseudospectral_Shattering.ipynb
+kernel_name: python3
+kernel_path: content/Gaussian_Regularization
+has_widgets: false
+title: |-
+  Shattering Pseudospectrum
+pagenum: 15
+prev_page:
+  url: /Gaussian_Regularization/Defining_Pseudospectrum.html
+next_page:
+  url: /Gaussian_Regularization/RADM.html
+suffix: .ipynb
+search: matrix eigenvalues pseudospectrum n ginibre eigenvalue gap frac below hr text gamma adding noise diagonal where leq gn x often desirable section demonstrate small random pseudospectral shattering banks garza vargas kulkarni srivastava perturbing shatter five plot its g well lambdai lambdaj theorem times working numerical calculations seperated disperse reproduce example given paper sign function diagonalization nearly multiplication arxiv org abs jess jorge archit nikhil mean separate shrink begin creating toeplitz zeros independent standard real gaussians repeated along above main only distinct zero multiplicity visulize perturb purbation scale create visualize perturbed spread tiny barely encircling zoom into better observe plots generated
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Shattering Pseudospectrum</div>
+</div>
+    <div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">toeplitz</span><span class="p">,</span> <span class="n">eigvals</span>
+<span class="kn">from</span> <span class="nn">pseudopy</span> <span class="kn">import</span> <span class="n">NonnormalMeshgrid</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">Random_Matrix</span> <span class="k">as</span> <span class="nn">RM</span>
+
+
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When working with numerical matrix calculations, it is often desirable to have eigenvalues that are seperated. In this section we will demonstrate that adding some small random noise can disperse the eigenvalues of a matrix. This section will reproduce the example given by the paper <a href="https://arxiv.org/abs/1912.08805"><em>Pseudospectral Shattering, the Sign Function, and Diagonalization in Nearly Matrix Multiplication Time</em></a> by Jess Banks, Jorge Garza Vargas, Archit Kulkarni, and Nikhil Srivastava.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Shattering-the-Pseudospectrum">Shattering the Pseudospectrum<a class="anchor-link" href="#Shattering-the-Pseudospectrum"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will demonstrate that perturbing a matrix with random noise by adding a Ginibre matrix can shatter the pseudospectrum, by which we mean separate the eigenvalues from each other and shrink the pseudospectrum. We begin by creating a five by five Toeplitz matrix with zeros on the diagonal and an independent standard real Gaussians repeated along each diagonal above the main diagonal.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">toeplitz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">A</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 0.        ,  0.29599552,  0.18548011, -0.82809842, -0.03192753],
+       [ 0.        ,  0.        ,  0.29599552,  0.18548011, -0.82809842],
+       [ 0.        ,  0.        ,  0.        ,  0.29599552,  0.18548011],
+       [ 0.        ,  0.        ,  0.        ,  0.        ,  0.29599552],
+       [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ]])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There is only one distinct eigenvalue (zero) with multiplicity 5. We visulize the eigenvalue below and plot its pseudospectral.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Create Meshgrid</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">NonnormalMeshgrid</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">real_min</span><span class="o">=-.</span><span class="mi">05</span><span class="p">,</span> <span class="n">real_max</span><span class="o">=.</span><span class="mi">05</span><span class="p">,</span> <span class="n">imag_min</span><span class="o">=-.</span><span class="mi">05</span><span class="p">,</span> <span class="n">imag_max</span><span class="o">=.</span><span class="mi">05</span><span class="p">,</span> <span class="n">real_n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">imag_n</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1">## Create Contours </span>
+<span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">),</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">),</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">5.5</span><span class="p">),</span> <span class="mf">1e-5</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="s2">&quot;lime&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;orange&quot;</span><span class="p">]</span>
+<span class="n">contours</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">Real</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">Imag</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">Vals</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+
+<span class="c1">## Create Legend </span>
+<span class="n">legend_elements</span> <span class="o">=</span> <span class="n">contours</span><span class="o">.</span><span class="n">legend_elements</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">contour_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;$\epsilon=10^{-7}$&#39;</span><span class="p">,</span><span class="s1">&#39;$\epsilon=10^{-6}$&#39;</span><span class="p">,</span> <span class="s1">&#39;$\epsilon=10^{-5.5}$&#39;</span><span class="p">,</span> <span class="s1">&#39;$\epsilon=10^{-5}$&#39;</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">contour_names</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+
+<span class="c1">## Plot Eigenvalues</span>
+<span class="n">λs</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+
+<span class="c1">## Label Plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-.</span><span class="mi">05</span><span class="p">,</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-.</span><span class="mi">05</span><span class="p">,</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Re&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Im&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Pseudospectra of Toeplitz  matrix&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Pseudospectral_Shattering_6_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will now perturb $A$ by adding a Ginibre matrix. To make the purbation small, we will scale the noise down by $10^{-6}$. Below we create the matrix $A + 10^{-6} G$ where $G$ is a Ginibre matrix.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A_perturbed</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_Ginibre</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="mf">1e-6</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Below we visualize the eigenvalues of this perturbed matrix and its pseudospectrum.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Create Meshgrid</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">NonnormalMeshgrid</span><span class="p">(</span><span class="n">A_perturbed</span><span class="p">,</span> <span class="n">real_min</span><span class="o">=-.</span><span class="mi">05</span><span class="p">,</span> <span class="n">real_max</span><span class="o">=.</span><span class="mi">05</span><span class="p">,</span> <span class="n">imag_min</span><span class="o">=-.</span><span class="mi">05</span><span class="p">,</span> <span class="n">imag_max</span><span class="o">=.</span><span class="mi">05</span><span class="p">,</span> <span class="n">real_n</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">imag_n</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
+
+<span class="c1">## Create Contours </span>
+<span class="n">contours</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">Real</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">Imag</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">Vals</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+
+<span class="c1">## Create Legend </span>
+<span class="n">legend_elements</span> <span class="o">=</span> <span class="n">contours</span><span class="o">.</span><span class="n">legend_elements</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">contour_names</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+
+<span class="c1">## Plot Eigenvalues</span>
+<span class="n">λs</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">A_perturbed</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λs</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λs</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+
+<span class="c1">## Label Plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-.</span><span class="mi">05</span><span class="p">,</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-.</span><span class="mi">05</span><span class="p">,</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Re&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Im&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Pseudospectra of Perturbed Toeplitz matrix&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Pseudospectral_Shattering_10_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see, the eigenvalues have spread out. The $(10^{-7})$-pseudospectrum is so tiny, we can barely see it encircling the eigenvalues in the plot. Below we zoom into each eigenvalue so that we may better observe the $(10^{-7})$-pseudospectrum. The plots are generated in increasing order of the eigenvalues' norms, so $\lambda_0$ has the smallest norm</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## lambda_0 is smallest eigenvalue</span>
+<span class="n">λs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">λs</span><span class="p">)):</span>
+    <span class="n">λ</span> <span class="o">=</span> <span class="n">λs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="c1">## Create Meshgrid</span>
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">NonnormalMeshgrid</span><span class="p">(</span><span class="n">A_perturbed</span><span class="p">,</span> <span class="n">real_min</span><span class="o">=</span><span class="n">λ</span><span class="o">.</span><span class="n">real</span> <span class="o">-.</span><span class="mi">0025</span> <span class="p">,</span> <span class="n">real_max</span><span class="o">=</span><span class="n">λ</span><span class="o">.</span><span class="n">real</span> <span class="o">+</span> <span class="o">.</span><span class="mi">0025</span><span class="p">,</span> 
+                             <span class="n">imag_min</span><span class="o">=</span><span class="n">λ</span><span class="o">.</span><span class="n">imag</span> <span class="o">-.</span><span class="mi">0025</span><span class="p">,</span> <span class="n">imag_max</span><span class="o">=</span><span class="n">λ</span><span class="o">.</span><span class="n">imag</span> <span class="o">+</span> <span class="o">.</span><span class="mi">0025</span><span class="p">,</span> <span class="n">real_n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">imag_n</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+    <span class="c1">## Create Contours </span>
+    <span class="n">contours</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">Real</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">Imag</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">Vals</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+
+    <span class="c1">## Plot Eigenvalues</span>
+    <span class="n">λ_scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">λ</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">λ</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+    <span class="n">contour_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;$\epsilon=10^{-7}$&#39;</span><span class="p">,</span><span class="s1">&#39;$\epsilon=10^{-6}$&#39;</span><span class="p">,</span> <span class="s1">&#39;$\epsilon=10^{-5.5}$&#39;</span><span class="p">,</span> <span class="s1">&#39;$\epsilon=10^{-5}$&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;$\lambda_</span><span class="si">{i}</span><span class="s2">$&quot;</span><span class="p">]</span>
+    
+    <span class="c1">## Create Legend </span>
+    <span class="n">legend_elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contours</span><span class="o">.</span><span class="n">legend_elements</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">λ_scatter</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">contour_names</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+
+    <span class="c1">## Label Plot</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">λ</span><span class="o">.</span><span class="n">real</span> <span class="o">-.</span><span class="mi">0025</span><span class="p">,</span> <span class="n">λ</span><span class="o">.</span><span class="n">real</span> <span class="o">+</span> <span class="o">.</span><span class="mi">0025</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">λ</span><span class="o">.</span><span class="n">imag</span> <span class="o">-.</span><span class="mi">0025</span><span class="p">,</span> <span class="n">λ</span><span class="o">.</span><span class="n">imag</span> <span class="o">+</span> <span class="o">.</span><span class="mi">0025</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Re&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Im&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pseudospectra of $\lambda_</span><span class="si">{i}</span><span class="s2">$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">();</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Pseudospectral_Shattering_12_0.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Pseudospectral_Shattering_12_1.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Pseudospectral_Shattering_12_2.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Pseudospectral_Shattering_12_3.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Pseudospectral_Shattering_12_4.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Clearly, no pair of eigenvalues are in each others $(10^{-7})$-pseudospectrum. This is desirable because if an algorithm is numerically stable for $10^{-7}$, it won't confuse any two eigenvalues.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Eigenvalue-Gaps">Eigenvalue Gaps<a class="anchor-link" href="#Eigenvalue-Gaps"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So how often and how well do Ginibre matricies shatter the pseudospectrum? First we need a metric that measures how well the pseudospectrum is shattered</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Definition</strong>: The minimum eigenvalue gap of a matrix $A$, denoted $\text{gap}(A)$, is defined as</p>
+$$\text{gap}(A) = \min_{i \neq j} |\lambda_i - \lambda_j| $$<p>where $\lambda_i$ and $\lambda_j$ are eigenvalues of $A$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Banks,Garza Vargas, Kulkarni, and Srivastava proved the following theorem about the effects on the eigenvalue gap and eigenvector condition number of a matrix when perturbing it with a Ginibre matrix.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Theorem</strong>: Suppose $A \in \mathbb{C}^{n \times n}$ with $||A|| \leq 1$, and $\gamma \in (0, \frac{1}{2})$. Let $G_n$ be an $n \times n$ Ginibre matrix and $X=A+\gamma G_n$. Then</p>
+$$\kappa_V(X) \leq \frac{n^2}{\gamma}, \ \ \text{gap}(X) \geq \frac{\gamma^4}{n^5}, \ \ \text{ and } \ ||G_n|| \leq 4$$<p>with probability at least $1-\frac{1}{n}- O(\frac{1}{n^2})$, where the implied constant is no more than $600$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

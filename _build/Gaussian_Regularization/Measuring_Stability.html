@@ -1,0 +1,1068 @@
+---
+redirect_from:
+  - "/gaussian-regularization/measuring-stability"
+interact_link: content/Gaussian_Regularization/Measuring_Stability.ipynb
+kernel_name: python3
+kernel_path: content/Gaussian_Regularization
+has_widgets: false
+title: |-
+  Measuring Stability
+pagenum: 13
+prev_page:
+  url: /Gaussian_Regularization/Perturbations_intro.html
+next_page:
+  url: /Gaussian_Regularization/Defining_Pseudospectrum.html
+suffix: .ipynb
+search: condition matrix bmatrix b v numbers n begin end br hr kappa eigenvalues eigenvector errors times ax define follows matrices where theorem stability solving x lets python standard normals generated computing vulnerable such answer us defined denoted text large inaccurate however results row k thus eigenvectors lambda vdv d bauer fike e computers finite precision round off system equations study linear invertible vector solution let instability randomly using normal expect rounding definition cases not produce three last gets grow test matricies higher hat our corresponding diagonlize diagonal following mathbb c diagonlizable mu eigenvalue left right verify example kappav unitary since
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Measuring Stability</div>
+</div>
+    <div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Although modern computers have incredible computing and storage capacity, their abilities are bounded by finite precision. Computers will only allocate a finite amount of memory to store numbers, which makes them vulnerable to round off errors. Algorithms are said to be numerically unstable if they are vulnerable to errors caused by the limited precision of machines.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Stability-for-Solving-System-of-Equations">Stability for Solving System of Equations<a class="anchor-link" href="#Stability-for-Solving-System-of-Equations"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will first study the most classic problem in linear algebra. Suppose we have an invertible $n \times n$ matrix $A$ and a $n \times 1$ vector $b$; find $x$ such that $Ax=b$. The answer of course is $x=A^{-1}b$. Let's try running this solution through Python. Define $A$ as</p>
+$$A = \begin{bmatrix}
+    1 &amp; 1 &amp; 1 \\
+    1 &amp; 0 &amp; 1 \\
+    0 &amp; 0 &amp; 1
+\end{bmatrix} $$<p>and</p>
+$$b = \begin{bmatrix}
+    3 \\
+    2 \\
+    1 
+\end{bmatrix} $$<p><br></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A_definition</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A_definition</span><span class="p">)</span> <span class="o">@</span> <span class="n">b</span>
+<span class="n">x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([1., 1., 1.])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see Python was able to arrive at the correct answer</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">A_definition</span><span class="nd">@x</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now let us demonstrate instability. We will create $A$ and $b$ randomly using standard normals and compute $x = A^{-1}b$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A_random</span><span class="p">)</span> <span class="o">@</span> <span class="n">b</span>
+<span class="n">x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([-1.59751199,  1.56415814,  0.45340236])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's check that $Ax=b$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">A_random</span><span class="nd">@x</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>False</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The reason for this failure is instability. When we generated numbers from the normal distribution, we got floats with as many decimal points as Python will allow. When performing operations with these numbers, we naturally expect to get rounding errors.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Condition-Number">Condition Number<a class="anchor-link" href="#Condition-Number"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The condition number for a matrix is defined as follows</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Definition</strong>: The condition number of a matrix $A$, denoted $\kappa(A)$, is defined as</p>
+$$\kappa(A) = \begin{cases} 
+      ||A|| \ \ ||A^{-1}|| &amp; \text{ if } A \text{ is invertible} \\
+      \infty &amp; \text{ otherwise}
+   \end{cases}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><br></p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The condition number can be thought of as how quickly the solution $x$ will change with changes in $b$ for solving $Ax=b$. A matrix having a large condition number does not imply the answer will be inaccurate, in fact both matrices used above have comparable condition numbers.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">A_definition</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>4.048917339522305</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">A_random</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>4.0666689231453415</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, matrices with high condition numbers will tend to produce inaccurate results when affected by rounding errors. The larger the condition number, the more vulnerable the matrix computations will be to round off errors. Let's experiment solving system of linear equations for matrices with different condition numbers. Define $A_k$ to be a three by three matrix where the first two rows are generated from standard normals and the last row is generated from normals with mean zero and standard deviation $\sigma_k = 10^{-k}$. As $k$ gets large, the last row will, almost surely, approach a row of all zeros. Thus we expect the condition numbers to grow as $k$ gets large.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">condition_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">A_k_array</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">A_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="p">),</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">])])</span>
+    <span class="n">A_k_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">A_k</span><span class="p">)</span>
+    <span class="n">kappa_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">A_k</span><span class="p">)</span>
+    <span class="n">condition_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kappa_k</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;k&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="s2">&quot;$\kappa(A_k)$&quot;</span><span class="p">:</span><span class="n">condition_numbers</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>k</th>
+      <th>$\kappa(A_k)$</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>5.407169e+00</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1.084314e+02</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>1.575952e+02</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>3.112404e+03</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>5.390301e+04</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>5</td>
+      <td>2.193631e+05</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>6</td>
+      <td>1.212843e+06</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>7</td>
+      <td>9.020887e+07</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>8</td>
+      <td>2.372110e+08</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>9</td>
+      <td>4.326598e+09</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's now test if the matricies with higher condition numbers produce more inaccurate results for solving $Ax=b$ where $b$ is some randomly generated vector of standard normals. We measure error by $|b - \hat{b}|$ where $\hat{b} := Ax$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">A_k</span> <span class="o">=</span> <span class="n">A_k_array</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A_k</span><span class="p">)</span> <span class="o">@</span> <span class="n">b</span>
+    <span class="n">b_estimate</span> <span class="o">=</span> <span class="n">A_k</span> <span class="o">@</span> <span class="n">x</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">b_estimate</span><span class="p">)</span>
+    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;k&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="s2">&quot;$\kappa(A)$&quot;</span><span class="p">:</span><span class="n">condition_numbers</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span><span class="n">errors</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>k</th>
+      <th>$\kappa(A)$</th>
+      <th>error</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>5.407169e+00</td>
+      <td>1.777224e-16</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1.084314e+02</td>
+      <td>3.510833e-16</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>1.575952e+02</td>
+      <td>3.510833e-16</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>3.112404e+03</td>
+      <td>1.502787e-14</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>5.390301e+04</td>
+      <td>2.993020e-13</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>5</td>
+      <td>2.193631e+05</td>
+      <td>1.111640e-12</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>6</td>
+      <td>1.212843e+06</td>
+      <td>7.139171e-12</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>7</td>
+      <td>9.020887e+07</td>
+      <td>1.236801e-09</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>8</td>
+      <td>2.372110e+08</td>
+      <td>6.509264e-10</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>9</td>
+      <td>4.326598e+09</td>
+      <td>5.559397e-09</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">condition_numbers</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">errors</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(\kappa(A_k)$)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(|b - \hat</span><span class="si">{b}</span><span class="s2">|)$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Error as condition number increases&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Gaussian_Regularization/Measuring_Stability_24_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see, as we dealt with matrices with higher condition numbers, the inaccuracy of our results tended to grow, as expected.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Stability-of-Eigenvalues">Stability of Eigenvalues<a class="anchor-link" href="#Stability-of-Eigenvalues"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If a $n \times n$ matrix $A$ has $n$ linearly independent eigenvectors $(v_1,...,v_n)$ with corresponding eigenvalues $(\lambda_1, ... , \lambda_n)$, then we can diagonlize $A$ as $VDV^{-1}$ where the $i$th column of $V$ is $v_i$ and $D$ is a diagonal matrix with $D_{ii} = \lambda_i$. It turns out that condition number of $V$ can help us understand the stability of computing eigenvalues with the following remarkable theorem</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Theorem (Bauer-Fike)</strong>: Let $A \in \mathbb{C}^{n \times n}$ be a diagonlizable matrix such that $A=VDV^{-1}$ (where $V$ is a matrix of eigenvectors and $D$ is a diagonal matrix of corresponding eigenvalues) and $E \in \mathbb{C}^{n \times n}$. If $\mu$ is an eigenvalue of $A + E$ then there exists an eigenvalue of $A$, denoted $\lambda$, such that</p>
+$$|\mu - \lambda| \leq \kappa(V) ||E|| $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><br></p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This tells us that if we perturb a matrix a little bit, the eigenvalues of the resulting matrix will be close to the original matrix. We will explore and test this theorem more in the next section.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Eigenvector-Condition-Number">Eigenvector Condition Number<a class="anchor-link" href="#Eigenvector-Condition-Number"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Define $A$ as follows</p>
+$$A = \begin{bmatrix}
+    1 &amp; 0  \\
+    -1 &amp; 2 
+\end{bmatrix} $$<p></p>
+<p>which has the following eigenpairs</p>
+$$\left(\begin{bmatrix} 0 \\ 1 \end{bmatrix}, 2 \right) \ , \ \left(\begin{bmatrix} 1 \\ 1 \end{bmatrix}, 1 \right)$$<p><br></p>
+<p>and thus can be decomposed as</p>
+$$A = 
+\begin{bmatrix}
+    0 &amp; 1  \\
+    1 &amp; 1 
+\end{bmatrix} 
+\begin{bmatrix}
+    2 &amp; 0  \\
+    0 &amp; 1 
+\end{bmatrix}
+\begin{bmatrix}
+    0 &amp; 1  \\
+    1 &amp; 1 
+\end{bmatrix}^{-1}$$<p><br></p>
+<p>We can verify our decomposition using Python</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">V</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">==</span> <span class="n">A</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we know from the Bauer-Fike theorem, the condition number of $V$ is useful for determining the stability of eigenvalues</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>2.6180339887498953</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The issue is that the choice of which eigenvectors to use for creating $V$ is not unique and could effect it's condition number. For example, we can define $V'$ as follows</p>
+$$V' = \begin{bmatrix}
+    0 &amp; 1  \\
+    3 &amp; 1 
+\end{bmatrix} $$<p><br></p>
+<p>we verify that we can diagonlize $A$ with $V'$ below</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V_prime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">V_prime</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">V_prime</span><span class="p">)</span> <span class="o">==</span> <span class="n">A</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, $\kappa(V) \neq \kappa(V')$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">V_prime</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>3.3699240762154807</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Thus in order to study the condition numbers of diagonlizing matricies, we define the Eigenvector Condition Number as follows</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Definition</strong>: The Eigenvector Condition Number of a diagonlizable matrix $A$, denoted $\kappa_V(A)$, is defined as</p>
+$$\kappa_V(A) = \inf_{V:A=VDV^{-1}} \kappa(V) $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><br></p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The eigenvector condition number of a matrix is important because it provides the tighestest bound for the inequality in the Bauer-Fike Theorem. There is no known general procedure for computing the eigenvector condition number, however it can sometimes be obvious. For example, if a matrix $A$ is normal, then it can be diagonalized by a unitary matrix. Since unitary matrices are isometries, their condition number is 1. Since a condition number cannot be lower than one, it follows that the eigenvector condition number of $A$ is 1.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

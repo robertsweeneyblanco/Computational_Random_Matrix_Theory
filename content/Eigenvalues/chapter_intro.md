@@ -1,0 +1,2 @@
+Eigenvalues are central to the study of random matrices. An eigenvalue of a random matrix is a random variable. In this chapter, we will describe interesting distributions that arise when studying eigenvalues and their level spacings. Many of the distributions studied in this section arise as the dimension of the random matrix tends towards infinity. By running simulations, we will see that the convergence to these distributions are fast and can serve as great approximations for finite random matrices. 
+

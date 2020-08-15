@@ -1,0 +1,908 @@
+---
+redirect_from:
+  - "/gaussian-regularization/radm"
+interact_link: content/Gaussian_Regularization/RADM.ipynb
+kernel_name: python3
+kernel_path: content/Gaussian_Regularization
+has_widgets: false
+title: |-
+  RADM Algorithm
+pagenum: 16
+prev_page:
+  url: /Gaussian_Regularization/Pseudospectral_Shattering.html
+next_page:
+  url: /Stochastic_Processes/chapter_intro.html
+suffix: .ipynb
+search: matrix c delta v radm square e sqrt condition r root algorithm perturbation small s approximate daveis epsilon text d n paper diagonalization eigenvector vdv where matrices results our following function cases lets try using sqrtm theorem numerical large numbers suppose begin finding value accuracy kappa error optimal frac davies stability compute before working introducing diagonlizing diagonlize gaussian its ginibre measuring ae sigma accounts caused below else end defined values helpful b such python any left right very br solution close gets regularization hr mathbb times leq brian proposes improved diagonlization computations randomized appromiate method used matricies diagonlized seen desirable
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">RADM Algorithm</div>
+</div>
+    <div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">sqrtm</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">RandomMatrix</span> <span class="k">as</span> <span class="nn">RM</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>E. Brian Davies' paper <em>Approximate Diagonalization</em> proposes an algorithm for improved numerical stability for diagonlization computations. The Randomized Appromiate Diagonalization Method (RADM) can be used to compute an approximate diagonalization for matricies with large eigenvector condition numbers.</p>
+<p>Suppose $A$ can be diagonlized as $VDV^{-1}$ where $V$ has a large condition number. As we have seen before, working with matrices with small condition numbers is desirable when working in a finite arithmetic enviroment (like computers). RADM suggests introducing a tiny, random perturbation to $A$ before diagonlizing in order to decrease the eigenvector condition number. So instead of diagonlizing $A$, we diagonlize $A+ \delta E$ where $E$ is a gaussian matrix with iid standard normals in its entries and $\delta$ is some small positive number. In this</p>
+<p>We will demonstrate the effectiveness of RADM by recreating some of the emperical results from Daveis' paper. Unlike Daveis, however, our perturbation will come from a Ginibre matrix. We will begin by running Daveis' experiment of finding a value of $\delta$ for a certain class of matrices.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Measuring-Accuracy">Measuring Accuracy<a class="anchor-link" href="#Measuring-Accuracy"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Daveis proposed the following formula for measuring the accuracy of an approximate diagonalization of $A$ by diagonalizing $A+E=VDV^{-1}$</p>
+$$\sigma(A,V,E,\epsilon) = \kappa(V) \epsilon + ||E||$$<p>where $\epsilon$ is the constant degree of accuracy.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The $\kappa(V) \epsilon$ term accounts for the errors caused by numerical inprecision and $||E||$ accounts for error caused by introducing the perturbation. We implement the function below.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">sigma</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">ϵ</span><span class="o">=</span><span class="mf">1e-16</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">*</span> <span class="n">ϵ</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Finding-the-optimal-$\delta$">Finding the optimal $\delta$<a class="anchor-link" href="#Finding-the-optimal-$\delta$"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose we define $A$ to be a 20 by 20 matrix in the following way</p>
+$$
+(A)_{r,s} = \begin{cases} 
+          \frac{r}{20} &amp; \text{if } s=r+1 \\
+          0 &amp; \text{else}
+          \end{cases}
+$$<p>The matrix is implemented below</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">A_matrix</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">r</span><span class="o">/</span><span class="mi">20</span>
+    <span class="k">return</span> <span class="mi">0</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_Custom</span><span class="p">(</span><span class="n">A_matrix</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The algorithm dictates that we introduce a perturbation to $A$ of the form $\delta Z$. Let's try to find the optimal value of $\delta$ for this matrix (the choice of $\delta$ that minimizes $\sigma(A,V,E,\epsilon)$).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Z</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_Ginibre</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">sigma_vals</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">log_condition</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">δs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">)),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">δ</span> <span class="ow">in</span> <span class="n">δs</span><span class="p">:</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">δ</span> <span class="o">*</span> <span class="n">Z</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">eigenvalues</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">A</span><span class="o">+</span><span class="n">E</span><span class="p">)</span>
+    <span class="n">sigma_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigma</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">V</span><span class="p">,</span><span class="n">E</span><span class="p">))</span>
+    <span class="n">log_condition</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">V</span><span class="p">)))</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;$\delta$&quot;</span><span class="p">:</span> <span class="n">δs</span><span class="p">,</span> <span class="s2">&quot;$$\sigma(A,V,E,\epsilon)$$&quot;</span><span class="p">:</span> <span class="n">sigma_vals</span><span class="p">,</span> <span class="s2">&quot;$$log_</span><span class="si">{10}</span><span class="s2">(\kappa(V))$$&quot;</span><span class="p">:</span> <span class="n">log_condition</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>$\delta$</th>
+      <th>$$\sigma(A,V,E,\epsilon)$$</th>
+      <th>$$log_{10}(\kappa(V))$$</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.000000e+00</td>
+      <td>1.000000e+00</td>
+      <td>1.260679</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.000000e-01</td>
+      <td>1.000000e-01</td>
+      <td>1.813794</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.000000e-02</td>
+      <td>1.000000e-02</td>
+      <td>2.825438</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1.000000e-03</td>
+      <td>1.000000e-03</td>
+      <td>3.739809</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.000000e-04</td>
+      <td>1.000000e-04</td>
+      <td>4.554702</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>1.000000e-05</td>
+      <td>1.000003e-05</td>
+      <td>5.440051</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1.000000e-06</td>
+      <td>1.000250e-06</td>
+      <td>6.397352</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1.000000e-07</td>
+      <td>1.023161e-07</td>
+      <td>7.364753</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1.000000e-08</td>
+      <td>3.041050e-08</td>
+      <td>8.309854</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>1.000000e-09</td>
+      <td>2.313358e-07</td>
+      <td>9.362361</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>1.000000e-10</td>
+      <td>1.521347e-06</td>
+      <td>10.182200</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>1.000000e-11</td>
+      <td>1.163115e-05</td>
+      <td>11.065622</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>1.000000e-12</td>
+      <td>9.933064e-05</td>
+      <td>11.997083</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>1.000000e-13</td>
+      <td>6.349410e-04</td>
+      <td>12.802733</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>1.000000e-14</td>
+      <td>4.449525e-03</td>
+      <td>13.648314</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>1.000000e-15</td>
+      <td>3.306881e-02</td>
+      <td>14.519419</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>0.000000e+00</td>
+      <td>inf</td>
+      <td>inf</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The optimal value of $\delta$ is $10^{-8}$. Our results are nearly identical to Daveis' paper, except we have chosen to use a Ginibre matrix for the perturbation.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Square-Root-of-Matrices">Square Root of Matrices<a class="anchor-link" href="#Square-Root-of-Matrices"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The square root of a matrix $A=VDV^{-1}$ can be defined as follows</p>
+$$\sqrt{A} = V\sqrt{D}V^{-1}$$<p>Where $\sqrt{D}$ is the diagonal matrix $D$ but with all its values square rooted. This resembles a square root because $(\sqrt{A})^2 = A$ as shown in the next line</p>
+$$ (\sqrt{A})^2 = V\sqrt{D}V^{-1}V\sqrt{D}V^{-1}= VDV^{-1} = A$$<p>So square rooting a matrix is helpful when you have a matrix $A$ and you want to find a matrix $B$ such that $B^2=A$. Let us try to find the square root of $A$ (as defined in the earlier section) in python</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sqrtm</span><span class="p">(</span><span class="n">A</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Failed to find a square root.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Perhaps we will have better luck using the RADM algorithm with $\delta=10^{-8}$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">δ</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span> 
+<span class="n">Z</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_Ginibre</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">E</span> <span class="o">=</span> <span class="n">δ</span> <span class="o">*</span> <span class="n">Z</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">eigenvalues</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">A</span><span class="o">+</span><span class="n">E</span><span class="p">)</span>
+<span class="n">D_sqrt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">))</span>
+<span class="n">A_sqrt</span> <span class="o">=</span> <span class="n">V</span> <span class="o">@</span> <span class="n">D_sqrt</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Seems like our code ran successfully, but how do we know if it is any good? Lets try to measure $||A - \left( \sqrt{A} \right)^2||$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_power</span><span class="p">(</span><span class="n">A_sqrt</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>4.1103251651171263e-07</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Seeing that this difference is extremely small, RADM was very effective in finding an approximate square root for our matrix.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Comparing-Results">Comparing Results<a class="anchor-link" href="#Comparing-Results"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So is using RADM always the best approach? Not necessarily. Lets compare the performance of Scipy's sqrtm function and the RADM algorithm. We will make the following adjustment to the definition of $A$, call it ${}_{c}A$, so that the sqrtm function will be able to find an approximate square root.</p>
+$$
+{}_{c}A_{r,s} = \begin{cases} 
+          \frac{r}{20} &amp; \text{if } s=r+1 \\
+          c &amp; \text{if } s=r \\
+          0 &amp; \text{else}
+          \end{cases}
+$$<p><br></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">c_A_matrix</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">r</span><span class="o">/</span><span class="n">n</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">c</span>
+    <span class="k">return</span> <span class="mi">0</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will try to compute the square root of $_{c}A$ directly using Scipy and call that solution $_{c}S$. Then we will take the square root of $_{c}A$ ourselves using the RADM algorithm with $\delta=10^{-8}$ and call that solution $_{c}R$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">c_R2_minus_c_A_norm</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">c_S2_minus_c_A_norm</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">c_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span> <span class="o">.</span><span class="mi">6</span><span class="p">,</span> <span class="o">.</span><span class="mi">4</span><span class="p">,</span> <span class="o">.</span><span class="mi">3</span><span class="p">,</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span><span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">05</span><span class="p">,</span> <span class="o">.</span><span class="mi">02</span><span class="p">,</span> <span class="o">.</span><span class="mi">01</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">c_vals</span><span class="p">:</span>
+    <span class="n">c_A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_Custom</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">:</span> <span class="n">c_A_matrix</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">c_S</span> <span class="o">=</span> <span class="n">sqrtm</span><span class="p">(</span><span class="n">c_A</span><span class="p">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_Ginibre</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">δ</span> <span class="o">*</span> <span class="n">Z</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">eigenvalues</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">c_A</span><span class="o">+</span><span class="n">E</span><span class="p">)</span>
+    <span class="n">D_sqrt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">))</span>
+    <span class="n">c_R</span> <span class="o">=</span> <span class="n">V</span> <span class="o">@</span> <span class="n">D_sqrt</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="n">c_R2_minus_c_A_norm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_power</span><span class="p">(</span><span class="n">c_R</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">c_A</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">c_S2_minus_c_A_norm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_power</span><span class="p">(</span><span class="n">c_S</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">c_A</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;$c$&quot;</span><span class="p">:</span> <span class="n">c_vals</span><span class="p">,</span> 
+              <span class="s2">&quot;$$||_</span><span class="si">{c}</span><span class="s2">R^2 - \ _</span><span class="si">{c}</span><span class="s2">A||$$&quot;</span><span class="p">:</span> <span class="n">c_R2_minus_c_A_norm</span><span class="p">,</span> 
+              <span class="s2">&quot;$$||_</span><span class="si">{c}</span><span class="s2">S^2 - \ _</span><span class="si">{c}</span><span class="s2">A||$$&quot;</span><span class="p">:</span> <span class="n">c_S2_minus_c_A_norm</span><span class="p">})</span>  
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>$c$</th>
+      <th>$$||_{c}R^2 - \ _{c}A||$$</th>
+      <th>$$||_{c}S^2 - \ _{c}A||$$</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.80</td>
+      <td>0.000067</td>
+      <td>5.851644e-15</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.60</td>
+      <td>0.000017</td>
+      <td>5.777242e-15</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.40</td>
+      <td>0.000096</td>
+      <td>1.484274e-14</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.30</td>
+      <td>0.000061</td>
+      <td>2.408642e-13</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.20</td>
+      <td>0.000114</td>
+      <td>3.532053e-11</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.10</td>
+      <td>0.000799</td>
+      <td>8.002574e-07</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>0.05</td>
+      <td>0.003461</td>
+      <td>6.703286e-02</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>0.02</td>
+      <td>0.237373</td>
+      <td>3.021511e+06</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0.01</td>
+      <td>1.028855</td>
+      <td>7.097185e+11</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see, for $c$ values close to 1, Numpy's sqrtm function is much more accurate for computing $\sqrt{_{}{}_{c}A}$. But as $c$ gets close to 0, the error explodes for sqrtm whereas the error only marginally increases for the RADM algorithm. Why might this be the case? Let's see what happens to the condition number of the matrix of eigenvectors Python uses to diagonlize ${}_{c}A$ as $c$ gets small.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">condition_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">c_vals</span><span class="p">:</span>
+    <span class="n">c_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfunction</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">:</span> <span class="n">c_A_matrix</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="n">otypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">]),</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
+    <span class="n">eigenvalues</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">c_A</span><span class="p">)</span>
+    <span class="n">condition_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;$c$&quot;</span><span class="p">:</span> <span class="n">c_vals</span><span class="p">,</span> 
+              <span class="s2">&quot;$$\log_</span><span class="si">{10}</span><span class="s2">(\kappa(S))$$&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">condition_numbers</span><span class="p">),</span>
+              <span class="s2">&quot;$$||_</span><span class="si">{c}</span><span class="s2">R^2 - \ _</span><span class="si">{c}</span><span class="s2">A||$$&quot;</span><span class="p">:</span> <span class="n">c_R2_minus_c_A_norm</span><span class="p">,</span> 
+              <span class="s2">&quot;$$||_</span><span class="si">{c}</span><span class="s2">S^2 - \ _</span><span class="si">{c}</span><span class="s2">A||$$&quot;</span><span class="p">:</span> <span class="n">c_S2_minus_c_A_norm</span><span class="p">})</span>  
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>$c$</th>
+      <th>$$\log_{10}(\kappa(S))$$</th>
+      <th>$$||_{c}R^2 - \ _{c}A||$$</th>
+      <th>$$||_{c}S^2 - \ _{c}A||$$</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.80</td>
+      <td>276.686149</td>
+      <td>0.000067</td>
+      <td>5.851644e-15</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.60</td>
+      <td>278.935046</td>
+      <td>0.000017</td>
+      <td>5.777242e-15</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.40</td>
+      <td>282.104689</td>
+      <td>0.000096</td>
+      <td>1.484274e-14</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.30</td>
+      <td>284.353586</td>
+      <td>0.000061</td>
+      <td>2.408642e-13</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.20</td>
+      <td>287.523229</td>
+      <td>0.000114</td>
+      <td>3.532053e-11</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.10</td>
+      <td>292.941769</td>
+      <td>0.000799</td>
+      <td>8.002574e-07</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>0.05</td>
+      <td>298.360309</td>
+      <td>0.003461</td>
+      <td>6.703286e-02</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>0.02</td>
+      <td>305.523232</td>
+      <td>0.237373</td>
+      <td>3.021511e+06</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0.01</td>
+      <td>inf</td>
+      <td>1.028855</td>
+      <td>7.097185e+11</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see, the RADM algorithm is helpful for matrices with very large eigenvector condition numbers. If the condition number of a matrix is already small, the matrix should be well behaved and produce numerically stable results without needing any perturbation.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Regularization-Theorem">Regularization Theorem<a class="anchor-link" href="#Regularization-Theorem"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following theorem was proven by Jess Banks, Archit Kulkarni, Satyaki Mukherjee, and Nikhil Srivastava in their paper <a href="https://arxiv.org/abs/1906.11819"><em>Gaussian Regularization of the Pseudospectrum and Davies’ Conjecture</em></a>.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Theorem</strong>: Suppose $A \in \mathbb{C}^{n \times n}$ and $\delta \in (0,1)$. Then there is a matrix $E \in \mathbb{C}^{n \times n}$ such that $||E|| \leq \delta ||A||$ and</p>
+$$\kappa_{V}(A+E) \leq 4n^{3/2} \left(1+\frac{1}{\delta} \right)$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><br></p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This theorem implies that if the eigenvector condition number of a matrix is huge, a small perturbation can dramatically help improve numerical stability.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

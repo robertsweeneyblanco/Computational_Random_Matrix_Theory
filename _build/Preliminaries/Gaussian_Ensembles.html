@@ -1,0 +1,529 @@
+---
+redirect_from:
+  - "/preliminaries/gaussian-ensembles"
+interact_link: content/Preliminaries/Gaussian_Ensembles.ipynb
+kernel_name: python3
+kernel_path: content/Preliminaries
+has_widgets: false
+title: |-
+  Gaussian Ensembles
+pagenum: 5
+prev_page:
+  url: /Preliminaries/Norms.html
+next_page:
+  url: /Eigenvalues/chapter_intro.html
+suffix: .ipynb
+search: nm g x n frac y mn mathbb ij sim e gaussian random matrix var complex ensemble nn ensembles goes hr numbers begin align aligned end ginibre neq j ii gues such since normal diagonal using c m note beta orthogonal class defining definition goe terms generating generate randommatrixs function unitary index gue matrices study called exists iid entires distribution proof linear independent variables ji thus standard diagonals into instead where variable off case uses dyson generalization known gse used combination also normally distributed nbsp normals along its generategoe second very similar except operate field chapter dealing avoid confusion signifies
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Gaussian Ensembles</div>
+</div>
+    <div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">RandomMatrix</span> <span class="k">as</span> <span class="nn">RM</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Gaussian-Orthogonal-Ensembles">Gaussian Orthogonal Ensembles<a class="anchor-link" href="#Gaussian-Orthogonal-Ensembles"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The first class of Random Matrix that we will study are Gaussian Orthogonal Ensembles.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Defining-GOEs">Defining GOEs<a class="anchor-link" href="#Defining-GOEs"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Definition</strong>: A matrix $G$ is called a Gaussian Orthogonal Ensemble (GOE) if there exists a random matrix $A$ with iid entires such that</p>
+$$A_{ij} \sim N(0,1)$$<p>such that</p>
+$$G = \frac{A + A^T}{2} $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="GOE-Distribution">GOE Distribution<a class="anchor-link" href="#GOE-Distribution"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If $G$ is a GOE, $G_{ij} \sim N(0, \frac{1}{2})$ for $i \neq j$ and $G_{ii} \sim N(0,1)$.</p>
+<p><em>Proof</em>:</p>
+<p>Since $G_{ij}$ is the linear combination of two independent normal random variables, it is also normally distributed. If $i \neq j$, then</p>
+$$\mathbb{E}[G_{ij}] = \mathbb{E}[\frac{A_{ij} + A^T_{ij}}{2}] = \frac{\mathbb{E}[A_{ij}] + \mathbb{E}[A_{ji}]}{2} = 0$$<p>&nbsp;</p>
+$$Var(G_{ij}) = Var(\frac{A_{ij} + A^T_{ij}}{2}) = \frac{Var(A_{ij}) + Var(A_{ji})}{4} = \frac{1}{2} $$<p>So $G_{ij} \sim N(0, \frac{1}{2})$ for $i \neq j$.</p>
+<p>For the diagonal terms,</p>
+$$G_{ii} = \frac{A_{ii} + A^T_{ii}}{2} = A_{ii}$$<p></p>
+<p>Thus $G$ has standard normals along its diagonals.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Generating-GOEs">Generating GOEs<a class="anchor-link" href="#Generating-GOEs"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can generate GOEs using RandomMatrix's function <code>Generate_GOE</code></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[-0.46716782,  0.24073782],
+       [ 0.24073782, -0.82809842]])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Gaussian-Unitary-Ensembles">Gaussian Unitary Ensembles<a class="anchor-link" href="#Gaussian-Unitary-Ensembles"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The second class of Random Matrix that we will study are Gaussian Unitary Ensembles. They are very similar to GOEs, except they operate over the field of complex numbers $\mathbb{C}$. In this chapter, since we are dealing with complex numbers, we index into a matrix using $n$ and $m$ instead of $i$ and $j$ to avoid confusion.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Defining-of-GUEs">Defining of GUEs<a class="anchor-link" href="#Defining-of-GUEs"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Definition</strong>: A matrix $G$ is called a Gaussian Unitary Ensemble (GUE) if there exists a random matrix $A$ with iid entires such that</p>
+$$A_{nm} = X_{nm} + i Y_{nm}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>where $X_{nm} \sim N(0, 1)$ and $Y_{nm} \sim N(0, 1)$ so that</p>
+$$G = \frac{A + A^*}{2} $$<p>Where * signifies the Hermitian adjoint.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="GUE-Distribution">GUE Distribution<a class="anchor-link" href="#GUE-Distribution"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If $G$ is a GUE, then $G_{nm} \sim N(0,1_{\mathbb{C}})$ (complex standard normal random variable) for off diagonal terms ($n \neq m$) and $G_{nn} \sim N(0,1)$ for the diagonal terms.</p>
+<p><em>Proof</em>:</p>
+<p>Note that</p>
+$$
+\begin{align}
+\begin{aligned}
+    G_{n,m} &amp;= \frac{A_{nm} + A^*_{nm}}{2} \\
+    &amp;= \frac{X_{nm} + i Y_{nm} + X_{mn} - iY_{mn}}{2} \\
+    &amp;= \frac{X_{nm} + X_{mn} + i(Y_{nm} - Y_{mn})}{2}
+\end{aligned}
+\end{align}
+$$<p>Lets start with the easy case, the diagonals</p>
+$$G_{nn} = \frac{X_{nn} + X_{nn} + i(Y_{nn} - Y_{nn})}{2} = X_{nn} \sim N(0, 1)$$<p>For the off diagonal case, $G_{nm}$ ($n \neq m$) is a complex normal random variable since it is the linear comination of independent complex normal random variables.</p>
+$$
+\begin{align}
+\begin{aligned}
+    \mathbb{E}[G_{nm}] &amp;= \mathbb{E}[\frac{X_{nm} + X_{mn} + i(Y_{nm} - Y_{mn})}{2}] \\
+    &amp;= \frac{\mathbb{E}[X_{nm}] + \mathbb{E}[X_{mn}] + i(\mathbb{E}[Y_{nm}] - \mathbb{E}[Y_{mn}])}{2} \\
+    &amp;= 0
+\end{aligned}
+\end{align}
+$$<p>Since the expectation is 0, the variance is simply,</p>
+$$
+\begin{align}
+\begin{aligned}
+    Var(G_{nm}) &amp;= \mathbb{E}[|\frac{X_{nm} + X_{mn} + i(Y_{nm} - Y_{mn})}{2}|^2] \\
+    &amp;= \frac{1}{4} \mathbb{E}[(X_{nm} + X_{mn})^2 + (Y_{nm}-Y_{mn})^2] 
+\end{aligned}
+\end{align}
+$$<p>Note $X_{nm} + X_{mn} \sim N(0,2)$ and $Y_{nm}-Y_{mn} \sim N(0,2)$, so</p>
+$$Var(G_{nm}) = \frac{1}{4} (Var(X_{nm} + X_{mn}) + Var(Y_{nm}-Y_{mn})) = 1$$<p>Thus $G_{nm} \sim N(0,1_{\mathbb{C}})$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Generating-GUEs">Generating GUEs<a class="anchor-link" href="#Generating-GUEs"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can generate GUEs using RandomMatrix's function <code>Generate_GUE</code></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RM</span><span class="o">.</span><span class="n">Generate_GUE</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[-0.03192753+0.j        ,  0.23804888-0.21683853j],
+       [ 0.23804888+0.21683853j, -0.29720092+0.j        ]])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that Python uses to letter $j$ instead of $i$ for complex numbers.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Dyson-Index">Dyson Index<a class="anchor-link" href="#Dyson-Index"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One might note that GUEs are a generalization of GOEs to the Complex numbers. Indeed this generalization can continue into larger supersets of numbers such as quaternions, whose gaussian ensemble is known as the Gaussian Symplectic Ensemble (GSE). To differentiate between these ensembles we often use the Dyson index, denoted by $\beta$, which corresponds to the dimension over the reals of the numbers being used. So for GOEs $\beta=1$, for GUEs $\beta=2$, for GSE $\beta=4$, etc. This class of Gaussian ensembles are known as Hermite.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Ginibre-Ensemble">Ginibre Ensemble<a class="anchor-link" href="#Ginibre-Ensemble"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A popular gaussian ensemble in modern work in Random Matrix Theory is the Ginibre ensemble. Among many other uses, they are used for perturbation techniques, which will be covered in later chapters.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Defining-Ginibre-Matrices">Defining Ginibre Matrices<a class="anchor-link" href="#Defining-Ginibre-Matrices"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Definition</strong>: A Ginibre matrix is an n × n random matrix with i.i.d complex Gaussian entries $G_{ij} \sim N(0,1_C/n)$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Generating-Ginibre-Matrices">Generating Ginibre Matrices<a class="anchor-link" href="#Generating-Ginibre-Matrices"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can generate Ginibre matrices using RandomMatrix's function <code>Generate_Ginibre</code></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RM</span><span class="o">.</span><span class="n">Generate_Ginibre</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[-0.13257661-0.34020346j,  0.12836047-0.25168349j],
+       [ 0.4698772 -0.85284598j,  0.01029282-0.39138839j]])</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

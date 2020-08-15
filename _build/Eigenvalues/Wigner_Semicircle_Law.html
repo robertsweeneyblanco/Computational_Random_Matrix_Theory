@@ -1,0 +1,920 @@
+---
+redirect_from:
+  - "/eigenvalues/wigner-semicircle-law"
+interact_link: content/Eigenvalues/Wigner_Semicircle_Law.ipynb
+kernel_name: python3
+kernel_path: content/Eigenvalues
+has_widgets: false
+title: |-
+  Wigner's Semicircle Law
+pagenum: 8
+prev_page:
+  url: /Eigenvalues/Distribution_of_Eigenvalues.html
+next_page:
+  url: /Eigenvalues/Wigner_Surmise.html
+suffix: .ipynb
+search: lambda n r semicircle sqrt beta alpha x distribution frac infty radius density eigenvalues cdot f law hr pi suppose sigma wigners gaussian ensemble rho note converge sigmar theorem not dyson index let int lambdan d longrightarrow lim implies below ab overset p sympy lets supported plots becomes apparent why called mathbb proof linear transformation formula left right thus interested single arbitrary necessarily biggest smallest eigenvalue joint given introduction chapter conditioning independent get semicricle studies simulation tends gets large scaling different radii want scale follows unit application having sim demonstration expected interval b times rightarrow intab t dt where denotes
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Wigner's Semicircle Law</div>
+</div>
+    <div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">RandomMatrix</span> <span class="k">as</span> <span class="nn">RM</span>
+
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="The-Semicircle-Distribution">The Semicircle Distribution<a class="anchor-link" href="#The-Semicircle-Distribution"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The semicircle distribution of radius $r &gt; 0$ is supported on $[-r, r]$ with density</p>
+$$\sigma_r(x) = \frac{2}{\pi r^2} \sqrt{r^2 - x^2}$$<p>If one plots the density, it becomes apparent why this is called the semicircle distribution.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Theorem</strong> Suppose $X$ has the semicircle distribution with radius $r$ and $\alpha &gt; 0 \in \mathbb{R}$, then $\alpha X$ has the semicircle distribution with radius $\alpha r$.</p>
+<p><em>Proof</em> Suppose $f(x)$ is the density of $\alpha X$, then by the linear transformation for density formula;</p>
+$$f(x) = \frac{\sigma_r(\frac{x}{\alpha})}{\alpha} = \frac{2}{\pi r^2 \alpha} \sqrt{r^2 - \left(\frac{x}{\alpha} \right)^2} = \frac{2}{\pi (\alpha r)^2} \sqrt{(\alpha r)^2 - x^2}$$<p>Thus $f = \sigma_{\alpha r}$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Wigner's-Semicircle-Law">Wigner's Semicircle Law<a class="anchor-link" href="#Wigner's-Semicircle-Law"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose we are interested in the distribution of a single arbitrary (not necessarily the biggest or smallest) eigenvalue $\lambda_1$ of a Gaussian Ensemble with Dyson index $\beta$. If we let $f$ be the joint density of the eigenvalues (given in the introduction of the chapter) and $\rho$ be the density of $\lambda_1$, by conditioning on the other eigenvalues (which are not independent), we get</p>
+$$ \rho(\lambda_1) = \int_{-\infty}^{\infty} \cdot \cdot \cdot \int_{-\infty}^{\infty} f(\lambda_1, \lambda_2,... \lambda_N) \ d\lambda_2 \cdot \cdot \cdot d\lambda_N  $$<p>Wigner's Semicricle Law studies the distribution of $\lambda_1$ as $N \longrightarrow \infty$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Wigner's Semicircle Law:</strong></p>
+$$\lim_{N \longrightarrow \infty} \sqrt{\beta N} \rho(\sqrt{\beta N}\lambda_1) = \sigma_{\sqrt{2}}(\lambda_1)$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Simulation-of-the-Law">Simulation of the Law<a class="anchor-link" href="#Simulation-of-the-Law"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note this implies that $\frac{\lambda_1}{\sqrt{\beta N}}$ tends to a semicircle distribution with radius $\sqrt{2}$ as $N$ gets large.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">GOE_λs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+<span class="n">GOE_scaled_eigenvalues</span> <span class="o">=</span> <span class="n">GOE_λs</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Scaled Eigenvalues&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;GOE Semicircle with radius $\sqrt</span><span class="si">{2}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">GOE_scaled_eigenvalues</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Semicircle_Law_14_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">GUE_λs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">RM</span><span class="o">.</span><span class="n">Generate_GUE</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+<span class="n">GUE_scaled_eigenvalues</span> <span class="o">=</span> <span class="n">GUE_λs</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">N</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Scaled Eigenvalues&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;GUE Semicircle with radius $\sqrt</span><span class="si">{2}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">GUE_scaled_eigenvalues</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Semicircle_Law_16_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We may use the scaling theorem to converge to different radii. If we want the eigenvalues to converge to a semicircle with radius $r$ we scale as follows</p>
+$$\frac{r \lambda_1}{\sqrt{2 \beta N}}$$<p>Below we make the eigenvalues converge to the unit semicircle.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">GOE_λs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+<span class="n">GOE_scaled_eigenvalues</span> <span class="o">=</span> <span class="n">GOE_λs</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">N</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Scaled Eigenvalues&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;GOE Unit Semicircle&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">GOE_scaled_eigenvalues</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Semicircle_Law_19_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">GUE_λs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">RM</span><span class="o">.</span><span class="n">Generate_GUE</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+<span class="n">GUE_scaled_eigenvalues</span> <span class="o">=</span> <span class="n">GUE_λs</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">N</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Scaled Eigenvalues&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;GUE Unit Semicircle&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">GUE_scaled_eigenvalues</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Semicircle_Law_21_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Application-of-the-Semicircle-Law">Application of the Semicircle Law<a class="anchor-link" href="#Application-of-the-Semicircle-Law"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that for a Gaussian Ensemble, $\frac{\lambda}{\sqrt{\beta N}}$ having the Semicircle($\sqrt{2}$) distribution implies $\lambda \sim $ Semicircle($\sqrt{2 \beta N}$). Below is a demonstration for $N=200$ and $\beta = 1$ and as expected we see a semicircle of radius 20.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trials</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">all_eigs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> 
+    <span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">all_eigs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">λs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Scaled Eigenvalues&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribution of 200 x 200 GOE eigenvalues&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">all_eigs</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Semicircle_Law_25_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let $\Lambda_{N, \beta}[a;b]$ be the number of eigenvalues in the interval $[a,b]$ of an $N \times N$ Gaussian ensemble with Dyson index $\beta$. Then</p>
+$$ \lim_{N \rightarrow \infty} \Lambda_{N, \beta}[a;b] \overset{p}{\to} N \int_a^b \sigma_{\sqrt{2 \beta N}}(t) \ dt$$<p>where $\overset{p}{\to}$ denotes convergence in probability. We can find a closed form expression for the integral using SymPy</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">N</span><span class="p">,</span> <span class="n">β</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;N β&quot;</span><span class="p">,</span> <span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">σ</span> <span class="o">=</span> <span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">β</span><span class="o">*</span><span class="n">N</span><span class="p">))</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">β</span><span class="o">*</span><span class="n">N</span><span class="p">)</span> <span class="o">-</span> <span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Λ_N_β</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="n">σ</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<span class="n">Λ_N_β</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle \frac{N β \operatorname{asin}{\left(\frac{\sqrt{2} t}{2 \sqrt{N} \sqrt{β}} \right)} + \frac{t \sqrt{2 N β - t^{2}}}{2}}{\pi β}$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that Sympy denote $\sin^{-1}$ as <code>asin</code>. Let's approximate $\Lambda_{200, 1}[10;15]$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Λ_200_1</span> <span class="o">=</span> <span class="n">Λ_N_β</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">β</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">Λ_200_1</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle \frac{\frac{t \sqrt{400 - t^{2}}}{2} + 200 \operatorname{asin}{\left(\frac{t}{20} \right)}}{\pi}$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="p">(</span><span class="n">Λ_200_1</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span> <span class="o">-</span> <span class="n">Λ_200_1</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span><span class="o">.</span><span class="n">evalf</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle 24.6708606141383$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's check this approximation empirically</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trials</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">in_range</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">matrix_size</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span> 
+    <span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">in_range</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">((</span><span class="mi">10</span> <span class="o">&lt;</span> <span class="n">λs</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">λs</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Number of Eigenvalues in (10,15)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;$\Lambda_{200, 1}[10;15]$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">in_range</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">in_range</span><span class="p">)))</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Semicircle_Law_33_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">in_range</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>24.584</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see, $\Lambda_{N,1}[10;15]$ successfully predicts the number eigenvalues in $(10,15)$ with reasonable variance. We can likewise predict $\Lambda_{200, 2}[10;15]$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Λ_200_2</span> <span class="o">=</span> <span class="n">Λ_N_β</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">β</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Λ_200_2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle \frac{\frac{t \sqrt{800 - t^{2}}}{2} + 400 \operatorname{asin}{\left(\frac{\sqrt{2} t}{40} \right)}}{2 \pi}$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="p">(</span><span class="n">Λ_200_2</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span> <span class="o">-</span> <span class="n">Λ_200_2</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span><span class="o">.</span><span class="n">evalf</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle 20.1498455367282$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trials</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">in_range</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GUE</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> 
+    <span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">in_range</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">((</span><span class="mi">10</span> <span class="o">&lt;</span> <span class="n">λs</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">λs</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Number of Eigenvalues in (10,15)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;$\Lambda_{200, 2}[10;15]$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">in_range</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">in_range</span><span class="p">)))</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Wigner_Semicircle_Law_39_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">in_range</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>20.123</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

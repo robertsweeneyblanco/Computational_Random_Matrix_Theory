@@ -1,0 +1,930 @@
+---
+redirect_from:
+  - "/eigenvalues/tracy-widom"
+interact_link: content/Eigenvalues/Tracy_Widom.ipynb
+kernel_name: python3
+kernel_path: content/Eigenvalues
+has_widgets: false
+title: |-
+  Tracy Widom
+pagenum: 11
+prev_page:
+  url: /Eigenvalues/Zeta_and_GUE/Zeta_and_GUE.html
+next_page:
+  url: /Gaussian_Regularization/Perturbations_intro.html
+suffix: .ipynb
+search: t n q beta frac f distribution tracy widom infty text x pmatrix ai s j sigma int define sqrt density begin end differential dx solve gaussian tw condition rightarrow eigenvalue ensemble let equation ode solver our lim paper arxiv org abs dyson index its solution cdf using initial dt such left right recall standard deviation off longest increasing subsequence sn ensembles studying fluctuations painlev boundry sim following e order large theorem thus solving system equations random math conditions where y below plot simulation proved align aligned lambda max goe chapter diagonal terms gue permutations elln pi longrightarrow defining defined
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Tracy Widom</div>
+</div>
+    <div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">symbols</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">integrate</span><span class="p">,</span> <span class="n">diff</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">airy</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span><span class="p">,</span> <span class="n">quad</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;../../&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">RandomMatrix</span> <span class="k">as</span> <span class="nn">RM</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Defining-the-Tracy-Widom-distribution">Defining the Tracy Widom distribution<a class="anchor-link" href="#Defining-the-Tracy-Widom-distribution"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The Tracy-Widom distribution was defined by Craig A. Tracy and Harold Widom in their paper <a href="https://arxiv.org/abs/solv-int/9509007"><em>On Orthogonal and Symplectic Matrix Ensembles</em></a>. It is an important distribution for studying the distribution of the fluctuations of the maximum eigenvalue of a Gaussian Ensemble. Each Gaussian ensemble has a corresponding Tracy Widom distribution. We will denote the Tracy Widom distribution for Gaussian Ensemble with Dyson index $\beta$ as $TW_\beta$. Let us study the distribution before its application.</p>
+<p>Suppose $q$ is the solution to the Painlevé differential equation</p>
+$$q'' = sq + 2q^3 $$<p>with the boundry condition $q \sim Ai(s)$ as $s \rightarrow \infty$. Define $I(t)$ and $J(t)$ to be the following</p>
+$$I(t) = - \int_{t}^{\infty} (x-t) q^2(x) dx$$$$J(t) = \int_{t}^{\infty} q(x) dx$$<p>If we define $F_\beta$ to be the CDF of $TW_\beta$ then</p>
+$$F_2(t) = e^{I(t)}$$$$F_1(t) = \sqrt{F_2(t) e^{-J(t)}} $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Density-of-Tracy-Widom">Density of Tracy Widom<a class="anchor-link" href="#Density-of-Tracy-Widom"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To solve for the density of the Tracy Widom we would need to solve for a closed form solution to the Painlevé differential equation. We will instead approximate the curve using the Scipy's ODE solver. In order to define an initial condition, let $t_0$ be a large value so that the condition $q(t_0) = \text{Ai}(t_0)$ approximates our asymptotic boundry condition well. Using the Fundamental Theorem of Calculus, we can differentiate $I$ and $J$ to make them a solution to a differential equation our ODE solver can solve.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Definition of I(t)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;t x&quot;</span><span class="p">)</span>
+<span class="n">q</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">)</span>
+<span class="n">I</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">q</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">oo</span><span class="p">))</span>
+<span class="n">I</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle \int\limits_{t}^{\infty} \left(- t + x\right) q^{2}{\left(x \right)}\, dx$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># I&#39;(t)</span>
+<span class="n">I_prime</span> <span class="o">=</span> <span class="n">diff</span><span class="p">(</span><span class="n">integrate</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">q</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">oo</span><span class="p">)),</span> <span class="n">t</span><span class="p">)</span>
+<span class="n">I_prime</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle \int\limits_{t}^{\infty} - q^{2}{\left(x \right)}\, dx$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># I&#39;&#39;(t)</span>
+<span class="n">I_prime2</span> <span class="o">=</span> <span class="n">diff</span><span class="p">(</span><span class="n">integrate</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">q</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">oo</span><span class="p">)),</span> <span class="n">t</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">I_prime2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle q^{2}{\left(t \right)}$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Thus we can solve for $I(t)$ by solving for the differential equation</p>
+$$ \frac{d}{dt} \begin{pmatrix}
+ \text{I}(t)\\
+\text{I}'(t)
+\end{pmatrix} =
+\begin{pmatrix}
+ \text{I}'(t)\\
+q^2
+\end{pmatrix}
+$$<p>such that</p>
+$$I(t_0) = - \int_{t_0}^{\infty} (x-t_0) q^2(x) dx $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">J</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">q</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">oo</span><span class="p">))</span>
+<span class="n">J</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle \int\limits_{t}^{\infty} q{\left(x \right)}\, dx$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># J&#39;(t)</span>
+<span class="n">diff</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$\displaystyle - q{\left(t \right)}$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Thus we can solve for $J$ by solving</p>
+$$ \frac{dJ}{dt} = -q(t)$$<p>such that</p>
+$$J(t_0) = \int_{t_0}^{\infty} q(x) dx$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In order to improve accuracy, we will use the solver to simultaneously find the values of $q(t)$, $I(t)$ and $J(t)$ in one system of differential equations. This strategy was suggested by Alan Edelman and Per-Olof Persson in their paper <a href="https://arxiv.org/abs/math-ph/0501068"><em>Numerical Methods for Eigenvalue Distributions of Random Matrices</em></a>. Note that we must now slightly change our initial conditions for $I(t)$ and $J(t)$ to avoid using $q$ (since we won't have an approximation for it yet). Luckly, we decided to choose $t_0$ large enough so that $q(t) \approx \text{Ai}(t)$ for $t \geq t_0$, so we may replace $q$ in our intial conditions with $\text{Ai}$. The system of differential equations becomes</p>
+$$\frac{dy}{dt} = \begin{pmatrix}
+q' \\
+tq+2q^3 \\
+I' \\
+q^2 \\
+-q
+\end{pmatrix}$$<p>where</p>
+$$y = \begin{pmatrix}
+q \\
+q' \\
+I \\
+I' \\
+J
+\end{pmatrix}$$<p>such that</p>
+$$y(t_0) = \begin{pmatrix}
+\text{Ai}(t_0) \\
+\text{Ai}'(t_0) \\
+\int_{t_0}^{\infty} (x-t_0) \text{Ai}^2(x) dx \\
+\text{Ai}(t_0)^2 \\
+\int_{t_0}^{\infty} \text{Ai}(x) dx
+\end{pmatrix} $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Below we define the function we will pass into the ODE solver</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">d0</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">t</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">3</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">d3</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">d4</span> <span class="o">=</span> <span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d0</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">d3</span><span class="p">,</span> <span class="n">d4</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Set the parameters</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t0</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">tf</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Define the initial condition</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y0_0</span> <span class="o">=</span> <span class="n">airy</span><span class="p">(</span><span class="n">t0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">y0_1</span> <span class="o">=</span> <span class="n">airy</span><span class="p">(</span><span class="n">t0</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">y0_2</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span><span class="o">*</span><span class="n">airy</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">t0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">y0_3</span> <span class="o">=</span> <span class="n">airy</span><span class="p">(</span><span class="n">t0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">y0_4</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">airy</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y0_0</span><span class="p">,</span> <span class="n">y0_1</span><span class="p">,</span> <span class="n">y0_2</span><span class="p">,</span> <span class="n">y0_3</span><span class="p">,</span> <span class="n">y0_4</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Solve the ODE</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span> <span class="p">,</span><span class="n">y0</span><span class="p">,</span> <span class="n">max_step</span><span class="o">=.</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Find the density of $TW_2$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">F2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="o">-</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">F2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Find the density of $TW_1$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">F1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">F2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">F1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">f2</span><span class="o">+</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">F2</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Plot the densities</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;β=2&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;β=1&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Tracy Widom for β=1,2&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Tracy_Widom_26_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Simulation">Simulation<a class="anchor-link" href="#Simulation"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tracy and Widom derived the distribution in their paper and proved its relationship to the fluctuations of the largest eigenvalue of Gaussian ensembles. Let the CDF for the $N \times N$ Gaussian ensemble with Dyson index $\beta$ be denoted as $F_{N, \beta}$. Also define $F_\beta$ and $f_\beta$ to be the CDF and density of the Tracy Widom distribution for Dyson index $\beta$ respectively. Tracy and Widom proved the following theorem</p>
+$$ F_\beta(s) = \lim_{N \rightarrow \infty} F_{N, \beta} \left(2 \sigma \sqrt{N} + \frac{\sigma s}{N^{1/6}} \right)$$<p>We can take the derivative to find the density of the distribution</p>
+$$
+\begin{align}
+\begin{aligned}
+f_\beta(s) &amp;= \lim_{N \rightarrow \infty} f_{N,\beta} \left(2 \sigma \sqrt{N} + \frac{\sigma s}{N^{1/6}} \right) \frac{\sigma}{N^{1/6}} \\\\
+&amp;= \lim_{N \rightarrow \infty} f_{N, \beta} \left(\frac{s+2\sqrt{N}N^{1/6}}{\frac{N^{1/6}}{\sigma}} \right) \frac{1}{\frac{N^{1/6}}{\sigma}}
+\end{aligned}
+\end{align}
+$$<p>Recall the formula for the density of linear transformations $f_{aX+b}(s) = f_{X}(\frac{s-b}{a}) \frac{1}{|a|}$. This implies that if $\lambda_{\max}$ is the greatest eigenvalue and $\sigma$ is the standard deviation of it's off diagonals, then</p>
+$$\lim_{N \rightarrow \infty} \frac{N^{1/6}}{\sigma} \lambda_{\max} - 2 \sqrt{N} N^{1/6} \sim \text{Tracy Widom}_{\beta}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Simulation">Simulation<a class="anchor-link" href="#Simulation"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="GOE">GOE<a class="anchor-link" href="#GOE"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recall from the first chapter the off diagonal terms in a GOE have standard deviation $\frac{1}{\sqrt{2}}$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trials</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">GOE_samples</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">σ</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GOE</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">λs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">λ_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">λs</span><span class="p">)</span>
+    <span class="n">GOE_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">N</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">λ_max</span><span class="o">/</span><span class="n">σ</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Samples&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Tracy-Widom GOE&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">GOE_samples</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">f1</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Tracy_Widom_33_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="GUE">GUE<a class="anchor-link" href="#GUE"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recall from the first chapter that the off diagonal terms of a GUE have standard deviation 1.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trials</span> <span class="o">=</span> <span class="mi">30000</span>
+<span class="n">GUE_samples</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">σ</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">RM</span><span class="o">.</span><span class="n">Generate_GUE</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">λs</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">λ_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">λs</span><span class="p">)</span>
+    <span class="n">GUE_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">N</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">λ_max</span><span class="o">/</span><span class="n">σ</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Samples&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Tracy-Widom GUE&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">GUE_samples</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">f2</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Tracy_Widom_37_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Longest-Increasing-Subsequence">Longest Increasing Subsequence<a class="anchor-link" href="#Longest-Increasing-Subsequence"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The Tracy Widom distribution suprisingly arises when studying sequences, as explained in <a href="https://arxiv.org/abs/math/9810105">On the Distribution of the Length of the Longest Increasing Subsequence of Random Permutations</a> by Jinho Baik, Percy Deift, and Kurt Johansson. Let $S_N$ be the group of permutations of $1,2,3,...,N$. Define $\ell_N(\pi)$ to be the longest monotone increasing subsequence $\pi \in S_n$. Then</p>
+$$ \frac{\ell_N - 2\sqrt{N}}{N^{1/6}} \longrightarrow TW_2$$<p></p>
+<p>as $N \longrightarrow \infty$.</p>
+<p>Below we sample from $S_N$, measure their lengths and plot the normalized distribution where $N=5000$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">longest_increasing_subsequence</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="c1"># https://en.wikipedia.org/wiki/Longest_increasing_subsequence#Efficient_algorithms</span>
+    <span class="sd">&quot;&quot;&quot;Returns the Longest Increasing Subsequence in the Given List/Array&quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">N</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">lo</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">hi</span> <span class="o">=</span> <span class="n">L</span>
+        <span class="k">while</span> <span class="n">lo</span> <span class="o">&lt;=</span> <span class="n">hi</span><span class="p">:</span>
+            <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span><span class="o">+</span><span class="n">hi</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">M</span><span class="p">[</span><span class="n">mid</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="n">lo</span> <span class="o">=</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hi</span> <span class="o">=</span> <span class="n">mid</span><span class="o">-</span><span class="mi">1</span>
+        <span class="n">newL</span> <span class="o">=</span> <span class="n">lo</span>
+        <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">newL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">M</span><span class="p">[</span><span class="n">newL</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">newL</span> <span class="o">&gt;</span> <span class="n">L</span><span class="p">):</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">newL</span>
+    <span class="k">return</span> <span class="n">L</span>
+
+<span class="k">def</span> <span class="nf">sample_random_perm_lens</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">):</span>
+    <span class="n">lengths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">numbers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sample_size</span><span class="p">):</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
+        <span class="n">lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">longest_increasing_subsequence</span><span class="p">(</span><span class="n">numbers</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">lengths</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="n">sample_size</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">perm_lens</span> <span class="o">=</span> <span class="n">sample_random_perm_lens</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">)</span>
+<span class="n">χ</span> <span class="o">=</span> <span class="p">(</span><span class="n">perm_lens</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">))</span><span class="o">/</span><span class="n">N</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">χ</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;β=2&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Eigenvalues/Tracy_Widom_42_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We expect the bias to be corrected as we increase $N$, but that may be very computationally expensive.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

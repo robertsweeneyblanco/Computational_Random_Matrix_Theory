@@ -1,0 +1,3 @@
+In the field of numerical analysis, the numerical stability of an algorithm is an important metric of its performance and usefullness. A numerically stable algorithm is one where the floating point errors (errors caused by the fact computers can only store a finite number of digits of a number in memory) are negligible. Algorithms that are numerically instable can often have their errors explode and render their results useless.
+
+This chapter will discuss how to measure how sensitive a matrix can be to round off errors for solving system of equations and diagonalization. We will also demonstrate how adding a small, random perturbation (Gaussian Regularization for example) can greatly improve the stability of working with the matrix. 

@@ -1,0 +1,150 @@
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script>
+			$(document).ready(function() {
+				$('#patron_form').click(function() {
+					$('#patron_container').toggle("fast");
+				});
+			});
+		</script>
+		<style>
+			body {
+				font-family: Arial, helvetica, Trebuchet, Arial Unicode MS;
+			}
+			.option_header {
+				font-size: 1.5em;
+				font-weight: bold;
+			}
+			.login_option {
+				min-width: 18.75em;
+				max-width: 30%;
+				margin: auto;
+				margin-bottom: 15px;
+				padding: 10px;
+				border: none;
+				background-color: #efefef;
+			}
+			.container{
+				width: 100%;
+				text-align: center;
+			  }
+			  .button {
+				background-color: #008CBA; /* Green */
+				border: none;
+				color: white;
+				padding: 15px 32px;
+				text-align: center;
+				text-decoration: none;
+				display: inline-block;
+				font-size: 16px;
+				margin: 4px 2px;
+				cursor: pointer;
+			  }
+			  .small_form {
+		              font-size: 1.2em;
+			  }
+		</style>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>UC Berkeley Library Proxy Login</title>
+		<script type="text/javascript">
+			var cookiename = 'ucbezproxylbluser';
+			function libproxysetcookie() {
+				var now = new Date();
+				now.setTime(now.getTime() + 4 * 3600000);
+				document.cookie = cookiename + '=1; domain=berkeley.edu; expires=' + now.toUTCString() + '; path=/';
+			}
+			function onloadfn() {
+				if (/\bucbezproxylbluser=1\b/.test(document.cookie)) {
+					window.location = 'https://www.jstor.org/stable/pdf/2152729.pdf?refreqid=excelsior%3A1a533ad22741697971aba16c96de4335';
+				}
+				var calnet_link = document.getElementById('calnet_link');
+				var go_direct = document.getElementById('go_direct');
+				if ('https://www.jstor.org/stable/pdf/2152729.pdf?refreqid=excelsior%3A1a533ad22741697971aba16c96de4335' == '^U') {
+					calnet_link.href = 'https://login.libproxy.berkeley.edu/login?auth=shib';
+					go_direct.parentNode.removeChild(go_direct);
+				} else {
+					document.getElementById('calnet_link').href = 'https://login.libproxy.berkeley.edu/login?auth=shib&qurl=' + encodeURIComponent('https://www.jstor.org/stable/pdf/2152729.pdf?refreqid=excelsior%3A1a533ad22741697971aba16c96de4335');
+				}
+			}
+			window[addEventListener ? 'addEventListener' : 'attachEvent'](
+				addEventListener ? 'load' : 'onload',
+				onloadfn
+			);
+		</script>
+		<link rel="shortcut icon" href="/public/favicon.ico" type="image/vnd.microsoft.icon" />
+		<link href="/public/styles.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body onload="if (/\bucbezproxylbluser=1\b/.test(document.cookie)) { window.location='https://www.jstor.org/stable/pdf/2152729.pdf?refreqid=excelsior%3A1a533ad22741697971aba16c96de4335'; }">
+		<div style="margin: 20 0 20 0;">
+			<a href="http://www.lib.berkeley.edu/"><img src="/public/logo_small.png" /> </a>
+		</div>
+
+		<div>
+			<div>
+				<div class="login_option">
+					<p>
+						<div class="container">
+						<a class="option_header" id="calnet_link" href="https://login.libproxy.berkeley.edu/login?auth=shib&qurl=https://www.jstor.org/stable/pdf/2152729.pdf?refreqid=excelsior%3A1a533ad22741697971aba16c96de4335"
+							>UC Berkeley CalNet Login</a>
+						</div>
+					</p>
+					<ul>
+						<li>UC Berkeley faculty, staff, students</li>
+						<li>CalNet ID and passphrase are required</li>
+					</ul>
+				</div>
+
+				<div class="login_option">
+						<div class="container">
+					<a id="patron_form" href='#' ><h2 class="small_form option_header">Patron / PIN Login</h2></a>
+					</div>
+					<ul>
+						<li>All Library and Cal 1 Card holders</li>
+						<li>Use the number printed on your card and your Patron PIN</li>
+					</ul>
+					<div class="container">
+				</div>
+					<div id="patron_container" style="display:none;">
+						<form action="/login" method="post">
+							<table border="0">
+								<input id="url_field" type="hidden" name="url" value="https://www.jstor.org/stable/pdf/2152729.pdf?refreqid=excelsior%3A1a533ad22741697971aba16c96de4335" />
+
+								<tr>
+									<td style="font-size:14;" align="left"><label for="code">Your Name:</label><br> <br> <br></td>
+									<td><input id="username" type="text" name="pass" autofocus />									<br>
+										<span style="font-size:10; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif">(example: Emily OR Chen)</span>
+										<br><br></td>
+
+								</tr>
+								<tr>
+									<td style="font-size:14;" align="left"><label for="code">Library/Cal 1 Card Number:</label><br> <br> <br></td>
+									<td><input type="text" name="user" />									<br>
+										<span style="font-size:10; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif">(example: 123456789 or L12345678)</span>
+										<br><br></td>
+								</tr>
+								<tr>
+									<td style="font-size:14;" align="left"><label for="code">Your PIN (password):</label><br> <span align="right" style="font-size: 100%"><a title="If you don't know your PIN or have forgotten it, you may reset it by clicking on the 'Forgot your PIN or don't have a PIN?' link.  A PIN must have an eight character minimum, with both alpha (A-Z) and numeric (0-9) characters. Symbols (!,$,#,&amp;, etc.) and spaces are not allowed." alt="If you don't know your PIN or have forgotten it, you may reset it by clicking on the 'Forgot your PIN or don't have a PIN?' link.  A PIN must have an eight character minimum, with both alpha (A-Z) and numeric (0-9) characters. Symbols (!,$,#,&amp;, etc.) and spaces are not allowed." href="http://oskicat.berkeley.edu/screens/help_myoskicat.html#pin">What's&nbsp;this</a>?</span><br><br></td>
+									<td><input type="password" name="pin" />									<br>
+										<a style="font-size:10; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif" href="https://oskicatp.berkeley.edu/pinreset~S1">Forgot your PIN or don't have a PIN?</a>
+										<br><br></td>
+								</tr>
+							</table>
+
+							<input type="submit" value="Submit" />
+						</form>
+					</div>
+				</div>
+				<div class="login_option">
+					<div class="container">
+						<h2 style="font-size:14px"><a onclick='libproxysetcookie(); window.location="https://www.jstor.org/stable/pdf/2152729.pdf?refreqid=excelsior%3A1a533ad22741697971aba16c96de4335";' href="https://www.jstor.org/stable/pdf/2152729.pdf?refreqid=excelsior%3A1a533ad22741697971aba16c96de4335" class="small_form" id="lbl_link">Berkeley Lab Access (LBNL)</a></h2>
+					<a href="https://commons.lbl.gov/display/itfaq/LBL+Library+Proxy+Configuration"><img src="/public/help.png"></a>
+					</div>
+			</div>
+
+			<p style="text-align: center;">
+				<a id="go_direct" href="https://www.jstor.org/stable/pdf/2152729.pdf?refreqid=excelsior%3A1a533ad22741697971aba16c96de4335">Attempt to go directly without logging in</a>
+			</p>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,874 @@
+---
+redirect_from:
+  - "/preliminaries/probability-theory"
+interact_link: content/Preliminaries/Probability_Theory.ipynb
+kernel_name: python3
+kernel_path: content/Preliminaries
+has_widgets: false
+title: |-
+  Probability Theory
+pagenum: 3
+prev_page:
+  url: /Preliminaries/Calculus.html
+next_page:
+  url: /Preliminaries/Norms.html
+suffix: .ipynb
+search: x mathbb random e p s probability complex circle variables sigma frac variable chord y real distribution fx space omega c f measure valued var re im mathcal continuous leq normal within definition hr infty note paradox solution its text diameter pi defined r dx spread variance cov spaces must algebra set rightarrow under events bertrands center passes through unit between computing probabilities function discrete absolutely density cdf expectation standard partial meant establish notation algebras understand subsets such bigcup closed also work probabilty sample possible outcomes fundamental any ai sum radius inches inch not hit area smaller bigger methods symmetry
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Probability Theory</div>
+</div>
+    <div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span> 
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plots</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This expository assumes the reader has a basic understanding of probability theory at the undergraduate level. This section of the chapter is meant to establish that we will be working within probability spaces and establish some notation, especially with complex random variables that many readers may be unfamiliar with.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Probability-Space">Probability Space<a class="anchor-link" href="#Probability-Space"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="$\sigma$-algebras">$\sigma$-algebras<a class="anchor-link" href="#$\sigma$-algebras"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Before defining a probability space, we must first understand the definition of a $\sigma$-algebra.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+
+<p><strong>Definition:</strong> A $\sigma$-algebra, $\Sigma$ on a set $S$ is a set of subsets of $S$ such that</p>
+<ol>
+<li>$S \in \Sigma$</li>
+<li>$S_1, S_2, ... \in \Sigma \Rightarrow \bigcup_{i=1}^\infty S_i \in \Sigma$ </li>
+<li>$S_1 \in \Sigma \Rightarrow S_1^c \in \Sigma$</li>
+</ol>
+<hr>
+
+<p>Note that because elements of $\sigma$-algebras are closed under unions and complements, they are also closed under intersections since $A \cap B = (A^c \cup B^c)^c$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Definition">Definition<a class="anchor-link" href="#Definition"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In classical probability we work within the confines of a probabilty space.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Definition:</strong> A probability space is a mathematical triplet $(\Omega, \mathcal{F}, P)$</p>
+<p>$\Omega$ is the sample space, which consists of all possible outcomes. This set may be finite or infinite.</p>
+<p>$\mathcal{F}$ is a $\sigma$-algebra of subsets of $\Omega$ .</p>
+<p>$P$ is the probability measure, which outputs the probability of an event. $P: \mathcal{F} \rightarrow [0,1]$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are three fundamental axioms that the probability measure must obey.</p>
+<ol>
+<li>For any $A \in \mathcal{F}$, $P(A) \geq 0$</li>
+<li>$P(\Omega)$ = 1</li>
+<li>If $A_1, A_2, ... \in \mathcal{F}$ are mutually exclusive events, $P(\bigcup_{i=1}^\infty A_i)= \sum_{i=1}^{\infty} P(A_i)$</li>
+</ol>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Bertrand's-Paradox">Bertrand's Paradox<a class="anchor-link" href="#Bertrand's-Paradox"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Bertrand's paradox demonstrates the need to work with probability spaces. This version of Bertrand's paradox was taken from Lawrence C. Evans' <em>An Introduction to Stochastic Differential Equations</em>.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Take a circle of radius 2 inches in the plane and choose a chord of this circle at random. What is the probability this chord intersects the concentric circle of radius 1 inch?</strong></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Solution-1">Solution 1<a class="anchor-link" href="#Solution-1"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Any such chord (provided it does not hit the center) is uniquely determined by the location of its midpoint.</p>
+<p>P(chord passes through unit circle) $=\frac{\text{area of smaller circle}}{\text{area of bigger circle}} = \frac{1}{4}$</p>
+<p>Let's see if we can demonstrate this solution with monte carlo methods.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">sample_random_point</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">**.</span><span class="mi">5</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)]</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)]</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">length</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">length</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x1</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span><span class="n">y1</span><span class="p">})</span>
+
+<span class="k">def</span> <span class="nf">solution_1_plot</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">bigx</span><span class="p">,</span> <span class="n">bigy</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">smallx</span><span class="p">,</span> <span class="n">smally</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bigx</span><span class="p">,</span> <span class="n">bigy</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">smallx</span><span class="p">,</span> <span class="n">smally</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+<span class="k">def</span> <span class="nf">inside_unit_circle</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sol_1_sample_size</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">random_point_example</span> <span class="o">=</span> <span class="n">sample_random_point</span><span class="p">(</span><span class="n">sol_1_sample_size</span><span class="p">)</span>
+<span class="n">in_unit_array</span> <span class="o">=</span> <span class="n">random_point_example</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">inside_unit_circle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">solution_1_plot</span><span class="p">(</span><span class="n">random_point_example</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Preliminaries/Probability_Theory_19_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">number_of_points_inside_unit_circle</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">in_unit_array</span><span class="p">)</span>
+<span class="n">number_of_points_inside_unit_circle</span> <span class="o">/</span> <span class="n">sol_1_sample_size</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.244</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Solution-2">Solution 2<a class="anchor-link" href="#Solution-2"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>By symmetry under rotation we may assume the chord is vertical. The diameter of the large circle is 4 inches and the chord will hit the small circle if it falls within its 2-inch diameter.</p>
+<p>P(chord passes through unit circle) $= \frac{\text{diameter of smaller circle}}{\text{diameter of bigger circle}} = \frac{1}{2}$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">sample_random_vertical</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">samples</span>
+
+<span class="k">def</span> <span class="nf">vertical_plot</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">bigx</span><span class="p">,</span> <span class="n">bigy</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">smallx</span><span class="p">,</span> <span class="n">smally</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bigx</span><span class="p">,</span> <span class="n">bigy</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">smallx</span><span class="p">,</span> <span class="n">smally</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">point</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sol_2_sample_size</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">vertical_cord_sample</span> <span class="o">=</span> <span class="n">sample_random_vertical</span><span class="p">(</span><span class="n">sol_2_sample_size</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vertical_plot</span><span class="p">(</span><span class="n">vertical_cord_sample</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Preliminaries/Probability_Theory_25_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vertical_crossing_unit</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">vertical_cord_sample</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">vertical_crossing_prob</span> <span class="o">=</span> <span class="n">vertical_crossing_unit</span> <span class="o">/</span> <span class="n">sol_2_sample_size</span>
+<span class="n">vertical_crossing_prob</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.47</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Solution-3">Solution 3<a class="anchor-link" href="#Solution-3"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>By symmetry we may assume one end of the chord is at the far left point of the larger circle. The angle θ the chord makes with the horizontal lies between $\pm \frac{\pi}{2}$ and the chord hits the inner circle if $\theta$ lies between $\pm \frac{\pi}{3}$.</p>
+<p>P(chord passes through unit circle) = $\frac{\frac{2\pi}{6}}{\frac{2\pi}{2}} = \frac{1}{3}$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell tag_hide_input">
+
+<div class="cell border-box-sizing code_cell rendered tag_hide_input">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">sample_random_thetas</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">samples</span>
+
+<span class="k">def</span> <span class="nf">angle_plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">bigx</span><span class="p">,</span> <span class="n">bigy</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">smallx</span><span class="p">,</span> <span class="n">smally</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bigx</span><span class="p">,</span> <span class="n">bigy</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">smallx</span><span class="p">,</span> <span class="n">smally</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2.5</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">theta</span><span class="p">)],</span> <span class="s1">&#39;k-&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sol_3_sample_size</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">sample_thetas</span> <span class="o">=</span> <span class="n">sample_random_thetas</span><span class="p">(</span><span class="n">sol_3_sample_size</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">angle_plot</span><span class="p">(</span><span class="n">sample_thetas</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Preliminaries/Probability_Theory_31_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">angle_crossing_unit</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">sample_thetas</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">angle_crossing_unit</span><span class="o">/</span><span class="n">sol_3_sample_size</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.34</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This paradox is meant to point out that "randomness" is not necessarily well defined. To understand and measure random events, one needs to contextualize it within a probability space. Each of the methods for computing the probabilities above were correct, but they each had different probability spaces which is why they had different answers.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Real-Random-Variables">Real Random Variables<a class="anchor-link" href="#Real-Random-Variables"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Computing-Probabilities">Computing Probabilities<a class="anchor-link" href="#Computing-Probabilities"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A real valued random variable is a measurable function from the sample space to the real numbers. Random variables are used to express events, for instance if $X$ is a random variable and $S \subseteq \mathbb{R}$ is measurable then</p>
+$$P(X \in S) = P(\{\omega \in \Omega : X(\omega) \in S\}) $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The distribution of a random variable identifies the possible values and the probabilty of those values. Random variables can map to both discrete and continuous ranges of $\mathbb{R}$. If $X$ is discrete, then</p>
+$$P(X \in S) = \sum_{s \in S} P(X=s)$$<p>If $X$ has an absolutely continuous distribution with respect to the lebesgue measure with density $f$, then</p>
+$$P(X \in S) = \int_{S} f_X(x) dx$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The cumulative distribution function (CDF) for a random variable is a function of a real valued variable and returns the probability the random variable will be less than or equal to the input.</p>
+$$F_X(x) = P(X \leq x) $$<p>Note that for a random variable with an absolutely continuous distribution, the derivative of the CDF is equal to it's density by the Fundamental Theorem of Calculus</p>
+$$\frac{d}{dx}[F_X(x)] = \frac{d}{dx} \left[ \int_{-\infty}^{x} f_X(t) \ dt \right] = f_X(x)$$<p></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Center,-Spread,-and-Correlation">Center, Spread, and Correlation<a class="anchor-link" href="#Center,-Spread,-and-Correlation"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The expectation and variance of a real valued random variable can be defined as follows for discrete and continuous random variables respectively.</p>
+$$\mathbb{E}[X] = \sum_x x P(X=x)$$$$\mathbb{E}[X] = \int_x x f_X(x) dx$$<p>Here we are summing and integrating over the image of $X$ in $\mathbb{R}$. A nice fact about expectation is that it is linear over addition.</p>
+$$\mathbb{E}[\sum_i X_i] = \sum_i \mathbb{E}[X_i] $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can measure how spread out from the mean the distribution with the variance and standard deviation</p>
+$$Var(X) = \mathbb{E}[(X-\mathbb{E}[X])^2] = \mathbb{E}[X^2] - (\mathbb{E}[X])^2$$$$SD(X) = \sqrt{Var(X)}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will denote the variance and standard deviation of $X$ with $\sigma^2_X$ and $\sigma_X$ respectively. The covariance of $X$ and $Y$ is defined as</p>
+$$Cov(X,Y) = \mathbb{E}[(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])] = \mathbb{E}[XY] - \mathbb{E}[X] \mathbb{E}[Y] $$<p>Note that $Var(X) = Cov(X,X)$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Complex-Random-Variables">Complex Random Variables<a class="anchor-link" href="#Complex-Random-Variables"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Computing-Probabilities-for-Complex-Random-Variables">Computing Probabilities for Complex Random Variables<a class="anchor-link" href="#Computing-Probabilities-for-Complex-Random-Variables"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Random variables can also map outcomes to complex numbers. For a complex random variable $X$, the real ($\Re(X)$) and imaginary ($\Im(X)$) components are each real valued random variables. We can generalize the CDF to complex random variables to be a mapping from $\mathbb{C} \longrightarrow [0,1]$</p>
+$$ F_X(x) = P(\Re(X) \leq \Re(x), \Im(X) \leq \Im(x))$$<p>Just like real random variables when the distribution is absolutely continuous, we can find the density by differentiating</p>
+$$f_X(x+iy) = \frac{\partial^2}{\partial x \partial y} P(\Re(X) \leq x, \Im(X) \leq y) $$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Center,-Spread,-and-Correlation-of-Complex-Random-Variables">Center, Spread, and Correlation of Complex Random Variables<a class="anchor-link" href="#Center,-Spread,-and-Correlation-of-Complex-Random-Variables"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The expectation of a complex random variable can be complex valued</p>
+$$\mathbb{E}[X] = \mathbb{E}[\Re(X)] + i \mathbb{E}[\Im(X)]$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The variance of a complex random variable, however, is still a measure of spread and thus must be real valued.</p>
+$$ Var(X) = \mathbb{E}[|X|^2] - |\mathbb{E}[X]|^2$$$$SD(X) = \sqrt{Var(X)}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The covariance between two complex random variables is defined to be</p>
+$$Cov(X,Y) = \mathbb{E}[X \overline{Y}] - E[X] \mathbb{E}[\overline{Y}]$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that it is still true that $Var(X) = Cov(X,X)$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Complex-Normal">Complex Normal<a class="anchor-link" href="#Complex-Normal"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A random variable $X$ is normal if the joint distribution $(\Re(X), \Im(X))$ is multivariate normal. If $X$ is a complex normal random variable, we done its distribution as</p>
+$$X \sim N_{\mathbb{C}}(\mu, \sigma^2) $$<p>where $\mu \in \mathbb{C}$ and $\sigma^2 \in \mathbb{R}$. A special case for this notation will be for the complex standard normal which will be denoted as $N(0, 1_{\mathbb{C}})$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
